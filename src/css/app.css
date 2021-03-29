@@ -1,0 +1,6 @@
+/* app global css */
+
+#the_only_mutation {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
