@@ -2,7 +2,7 @@
   <q-layout view='lHh Lpr lFf'>
     <q-header elevated>
       <q-bar dense class='bg-teal text-white'>
-        <q-space />
+        <q-space />123
         <q-btn icon='minimize' flat round @click='minimize()' />
         <!-- <q-btn :icon='isMaximized() ? "mdi-window-restore" : "mdi-window-maximize"' flat round @click='toggleMaximize()' /> -->
         <q-btn icon='close' flat round @click='close()' />
