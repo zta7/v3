@@ -1,14 +1,15 @@
 <template>
   <q-layout view='lHh Lpr lFf'>
-    <q-header elevated>
-      <q-bar dense class='bg-teal text-white'>
-        <q-space />123
-        <q-btn icon='minimize' flat round @click='minimize()' />
-        <!-- <q-btn :icon='isMaximized() ? "mdi-window-restore" : "mdi-window-maximize"' flat round @click='toggleMaximize()' /> -->
-        <q-btn icon='close' flat round @click='close()' />
+    <q-header>
+      <q-bar dense class='bg-teal text-white row no-wrap justify-between'>
+        <div id='_header' class='col-grow full-height' />
+        <q-btn-group flat>
+          <q-btn icon='minimize' flat round @click='minimize()' />
+          <q-btn :icon='isMaximized ? "mdi-window-restore" : "mdi-window-maximize"' flat round @click='toggleMaximize()' />
+          <q-btn icon='close' flat round @click='close()' />
+        </q-btn-group>
       </q-bar>
     </q-header>
-
     <!-- <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -32,33 +33,46 @@
 </template>
 
 <script>
-
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'MainLayout',
-  setup() {
-    function minimize() {
-      if (process.env.MODE === 'electron') window.WindowAPI.minimize()
+  setup(props, context) {
+    const isMaximized = ref(window.electron.isMaximized())
+
+    const minimize = () => {
+      window.electron.minimize()
     }
 
     function toggleMaximize() {
-      if (process.env.MODE === 'electron') window.WindowAPI.toggleMaximize()
+      window.electron.toggleMaximize()
     }
 
     function close() {
-      if (process.env.MODE === 'electron') window.WindowAPI.close()
+      window.electron.close()
     }
 
-    // function isMaximized() {
-    //   if (process.env.MODE === 'electron') return window.WindowAPI.isMaximized()
-    // }
+    window.electron.$on('maximize', () => isMaximized.value = true)
+    window.electron.$on('unmaximize', () => isMaximized.value = false)
+
+    // const $q = useQuasar()
+    // window.electron.$on('resized', (evt, { newBounds }) => {
+    //   console.log(newBounds)
+    //   $q.localStorage.set('width', newBounds.width)
+    //   $q.localStorage.set('height', newBounds.height)
+    // })
+    // window.electron.$on('moved', (evt, { newBounds }) => {
+    //   console.log(newBounds)
+    //   $q.localStorage.set('x', newBounds.x)
+    //   $q.localStorage.set('y', newBounds.y)
+    // })
 
     return {
       minimize,
       toggleMaximize,
-      close
-      // isMaximized
+      close,
+      isMaximized
     }
   }
 })

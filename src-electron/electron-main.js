@@ -15,9 +15,8 @@ function createWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
     useContentSize: true,
+    fullscreenable: false,
     frame: false,
     webPreferences: {
       enableRemoteModule: true,
@@ -40,8 +39,24 @@ function createWindow() {
     })
   }
 
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('maximize')
+  })
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('unmaximize')
+  })
+
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+
+  mainWindow.on('resized', (evt, newBounds) => {
+    console.log(evt, newBounds)
+    mainWindow.webContents.send('resized')
+  })
+  mainWindow.on('moved', (evt, newBounds) => {
+    mainWindow.webContents.send('moved')
   })
 }
 

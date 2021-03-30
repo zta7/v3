@@ -1,6 +1,10 @@
 /* app global css */
 
-#the_only_mutation {
+#_header {
   -webkit-user-select: none;
   -webkit-app-region: drag;
+}
+
+.body--light {
+  background: #fff;
 }

@@ -16,11 +16,11 @@
  *   })
  */
 
-import { contextBridge, remote } from 'electron'
+import { contextBridge, remote, ipcRenderer } from 'electron'
 
 const { BrowserWindow } = remote
 
-contextBridge.exposeInMainWorld('WindowAPI', {
+contextBridge.exposeInMainWorld('electron', {
   minimize() {
     BrowserWindow.getFocusedWindow().minimize()
   },
@@ -39,5 +39,16 @@ contextBridge.exposeInMainWorld('WindowAPI', {
 
   isMaximized() {
     return BrowserWindow.getFocusedWindow().isMaximized()
+  },
+
+  $on(channel, func) {
+    ipcRenderer.on(channel, (evt, ...args) => {
+      console.log(evt, ...args)
+      func(evt, ...args)
+    })
+  },
+
+  $off(channel) {
+    ipcRenderer.removeListener(channel)
   }
 })

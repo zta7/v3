@@ -1,13 +1,24 @@
 <template>
   <q-page class='flex flex-center'>
-    123
+    {{ a ? '1' : '2' }}
+    <q-btn @click='fn()' />
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  name: 'PageIndex'
+  name: 'PageIndex',
+  setup() {
+    let a = ref(true)
+    const fn = function() {
+      a = !a
+    }
+    return {
+      a,
+      fn
+    }
+  }
 })
 </script>
