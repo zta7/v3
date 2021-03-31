@@ -43,7 +43,7 @@ contextBridge.exposeInMainWorld('electron', {
 
   $on(channel, func) {
     ipcRenderer.on(channel, (evt, ...args) => {
-      console.log(evt, ...args)
+      console.log('cc')
       func(evt, ...args)
     })
   },

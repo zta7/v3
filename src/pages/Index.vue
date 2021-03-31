@@ -10,7 +10,8 @@ import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'PageIndex',
-  setup() {
+  setup(props, context) {
+    console.log(context)
     let a = ref(true)
     const fn = function() {
       a = !a

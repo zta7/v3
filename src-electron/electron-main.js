@@ -9,15 +9,30 @@ catch (_) {
 }
 
 let mainWindow
+const preloadFile = 'preload.json'
 
 function createWindow() {
   /**
    * Initial window options
    */
+  const low = require('lowdb')
+  const FileSync = require('lowdb/adapters/FileSync')
+  const adapter = new FileSync(preloadFile)
+  const db = low(adapter)
+  const width = db.get('width').value()
+  const height = db.get('height').value()
+  const x = db.get('x').value()
+  const y = db.get('y').value()
   mainWindow = new BrowserWindow({
+    width,
+    height,
+    x,
+    y,
     useContentSize: true,
     fullscreenable: false,
     frame: false,
+    // https://www.electronjs.org/docs/api/browser-window#setting-backgroundcolor
+    backgroundColor: '#ffffff',
     webPreferences: {
       enableRemoteModule: true,
       contextIsolation: true,
@@ -40,7 +55,7 @@ function createWindow() {
   }
 
   mainWindow.on('maximize', () => {
-    mainWindow.webContents.send('maximize')
+    mainWindow.webContents.send('maximizze')
   })
 
   mainWindow.on('unmaximize', () => {
@@ -51,12 +66,13 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.on('resized', (evt, newBounds) => {
-    console.log(evt, newBounds)
-    mainWindow.webContents.send('resized')
-  })
-  mainWindow.on('moved', (evt, newBounds) => {
-    mainWindow.webContents.send('moved')
+  mainWindow.on('close', () => {
+    const low = require('lowdb')
+    const FileSync = require('lowdb/adapters/FileSync')
+    const adapter = new FileSync(preloadFile)
+    const db = low(adapter)
+    const Bounds = mainWindow.getBounds()
+    for (const [k, v] of Object.entries(Bounds)) db.set(k, v).write()
   })
 }
 

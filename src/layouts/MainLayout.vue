@@ -33,40 +33,34 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import { useQuasar } from 'quasar'
+import { defineComponent, ref, onMounted } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-  setup(props, context) {
-    const isMaximized = ref(window.electron.isMaximized())
+  setup() {
+    const isMaximized = ref(undefined)
+
+    onMounted(() => {
+      isMaximized.value = window.electron.isMaximized()
+    })
 
     const minimize = () => {
       window.electron.minimize()
     }
 
-    function toggleMaximize() {
+    const toggleMaximize = () => {
       window.electron.toggleMaximize()
     }
 
-    function close() {
+    const close = () => {
       window.electron.close()
     }
 
-    window.electron.$on('maximize', () => isMaximized.value = true)
+    window.electron.$on('maximize', () => {
+      console.log('wtf')
+      isMaximized.value = true
+    })
     window.electron.$on('unmaximize', () => isMaximized.value = false)
-
-    // const $q = useQuasar()
-    // window.electron.$on('resized', (evt, { newBounds }) => {
-    //   console.log(newBounds)
-    //   $q.localStorage.set('width', newBounds.width)
-    //   $q.localStorage.set('height', newBounds.height)
-    // })
-    // window.electron.$on('moved', (evt, { newBounds }) => {
-    //   console.log(newBounds)
-    //   $q.localStorage.set('x', newBounds.x)
-    //   $q.localStorage.set('y', newBounds.y)
-    // })
 
     return {
       minimize,
