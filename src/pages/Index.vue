@@ -1,24 +1,37 @@
 <template>
   <q-page class='flex flex-center'>
-    {{ a ? '1' : '2' }}
-    <q-btn @click='fn()' />
+    {{ os }}
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 
 export default defineComponent({
   name: 'PageIndex',
   setup(props, context) {
-    console.log(context)
-    let a = ref(true)
-    const fn = function() {
-      a = !a
+    const os_keys = [
+      'arch', 'cpus', 'freemem', 'homedir', 'hostname', 'networkInterfaces', 'platform',
+      'release'
+    ]
+    const os = ref({})
+    const os_timber = () => {
+      os.value = window.node.osInformation(os_keys)
+      setInterval(() => {
+        os.value = window.node.osInformation(os_keys)
+      }, 5000)
     }
+
+    onMounted(() => {
+      os_timber()
+    })
+
+    onUnmounted(() => {
+      clearInterval(os_timber)
+    })
+
     return {
-      a,
-      fn
+      os
     }
   }
 })

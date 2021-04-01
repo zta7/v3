@@ -8,28 +8,19 @@ catch (_) {
   // continue regardless of error
 }
 
-let mainWindow
-const preloadFile = 'preload.json'
-
+let win
 function createWindow() {
-  /**
-   * Initial window options
-   */
-  const low = require('lowdb')
-  const FileSync = require('lowdb/adapters/FileSync')
-  const adapter = new FileSync(preloadFile)
-  const db = low(adapter)
-  const width = db.get('width').value()
-  const height = db.get('height').value()
-  const x = db.get('x').value()
-  const y = db.get('y').value()
-  mainWindow = new BrowserWindow({
-    width,
-    height,
-    x,
-    y,
-    useContentSize: true,
-    fullscreenable: false,
+  const winStateKeeper = require('electron-window-state')
+  const winState = winStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800,
+    path: './'
+  })
+  win = new BrowserWindow({
+    x: winState.x,
+    y: winState.y,
+    width: winState.width,
+    height: winState.height,
     frame: false,
     // https://www.electronjs.org/docs/api/browser-window#setting-backgroundcolor
     backgroundColor: '#ffffff',
@@ -40,39 +31,30 @@ function createWindow() {
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
     }
   })
-
-  mainWindow.loadURL(process.env.APP_URL)
+  winState.manage(win)
+  win.loadURL(process.env.APP_URL)
 
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools()
+    win.webContents.openDevTools()
   }
   else {
     // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow.webContents.closeDevTools()
+    win.webContents.on('devtools-opened', () => {
+      win.webContents.closeDevTools()
     })
   }
 
-  mainWindow.on('maximize', () => {
-    mainWindow.webContents.send('maximizze')
+  win.on('maximize', () => {
+    win.webContents.send('maximize')
   })
 
-  mainWindow.on('unmaximize', () => {
-    mainWindow.webContents.send('unmaximize')
+  win.on('unmaximize', () => {
+    win.webContents.send('unmaximize')
   })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
-
-  mainWindow.on('close', () => {
-    const low = require('lowdb')
-    const FileSync = require('lowdb/adapters/FileSync')
-    const adapter = new FileSync(preloadFile)
-    const db = low(adapter)
-    const Bounds = mainWindow.getBounds()
-    for (const [k, v] of Object.entries(Bounds)) db.set(k, v).write()
+  win.on('closed', () => {
+    win = null
   })
 }
 
@@ -83,5 +65,5 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) createWindow()
+  if (win === null) createWindow()
 })

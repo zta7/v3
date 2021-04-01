@@ -43,12 +43,28 @@ contextBridge.exposeInMainWorld('electron', {
 
   $on(channel, func) {
     ipcRenderer.on(channel, (evt, ...args) => {
-      console.log('cc')
       func(evt, ...args)
     })
   },
 
   $off(channel) {
     ipcRenderer.removeListener(channel)
+  }
+
+})
+
+contextBridge.exposeInMainWorld('node', {
+  osInformation(list) {
+    const os = require('os')
+    const data = {}
+    try {
+      list.forEach(e => {
+        data[e] = os[e]()
+      })
+    }
+    catch (err) {
+      // ignore
+    }
+    return data
   }
 })
