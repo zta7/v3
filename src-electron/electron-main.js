@@ -13,8 +13,7 @@ function createWindow() {
   const winStateKeeper = require('electron-window-state')
   const winState = winStateKeeper({
     defaultWidth: 1000,
-    defaultHeight: 800,
-    path: './'
+    defaultHeight: 800
   })
   win = new BrowserWindow({
     x: winState.x,

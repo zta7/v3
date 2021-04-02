@@ -1,22 +1,8 @@
-/**
- * This file is used specifically for security reasons.
- * Here you can access Nodejs stuff and inject functionality into
- * the renderer thread (accessible there through the "window" object)
- *
- * WARNING!
- * If you import anything from node_modules, then make sure that the package is specified
- * in package.json > dependencies and NOT in devDependencies
- *
- * Example (injects window.myAPI.doAThing() into renderer thread):
- *
- *   const { contextBridge } = require('electron')
- *
- *   contextBridge.exposeInMainWorld('myAPI', {
- *     doAThing: () => {}
- *   })
- */
-
 import { contextBridge, remote, ipcRenderer } from 'electron'
+const os = require('os')
+const mkdirp = require('mkdirp')
+const path = require('path')
+const jf = require('jsonfile')
 
 const { BrowserWindow } = remote
 
@@ -53,18 +39,38 @@ contextBridge.exposeInMainWorld('electron', {
 
 })
 
+const osFile = 'os-list.json'
+const osFullFile = path.join(remote.app.getPath('userData'), osFile)
+
 contextBridge.exposeInMainWorld('node', {
-  osInformation(list) {
-    const os = require('os')
+  osInformation() {
+    let osKeys = []
+    const rewrite = () => {
+      const defaultKeys = [
+        'arch', 'cpus', 'freemem', 'homedir', 'hostname', 'networkInterfaces', 'platform', 'release'
+      ]
+      mkdirp.sync(osFile)
+      jf.writeFileSync(osFullFile, defaultKeys)
+      return defaultKeys
+    }
+
+    const json = jf.readFileSync(osFullFile, { throws: false })
+    if (Object.prototype.toString.call(json) === '[object Array]') osKeys = json
+    else osKeys = rewrite()
+
     const data = {}
     try {
-      list.forEach(e => {
+      osKeys.forEach(e => {
         data[e] = os[e]()
       })
     }
     catch (err) {
-      // ignore
+      return {}
     }
+
     return data
+  },
+  openOsInformation() {
+    remote.shell.openPath(osFullFile)
   }
 })
