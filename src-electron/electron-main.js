@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, sc } from 'electron'
 import path from 'path'
 
 try {
@@ -8,17 +8,21 @@ catch (_) {
   // continue regardless of error
 }
 
-let mainWindow
-
+let win
 function createWindow() {
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
-    useContentSize: true,
+  const winStateKeeper = require('electron-window-state')
+  const winState = winStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800
+  })
+  win = new BrowserWindow({
+    x: winState.x,
+    y: winState.y,
+    width: winState.width,
+    height: winState.height,
     frame: false,
+    // https://www.electronjs.org/docs/api/browser-window#setting-backgroundcolor
+    backgroundColor: '#ffffff',
     webPreferences: {
       enableRemoteModule: true,
       contextIsolation: true,
@@ -26,22 +30,30 @@ function createWindow() {
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
     }
   })
-
-  mainWindow.loadURL(process.env.APP_URL)
+  winState.manage(win)
+  win.loadURL(process.env.APP_URL)
 
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools()
+    win.webContents.openDevTools()
   }
   else {
     // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow.webContents.closeDevTools()
+    win.webContents.on('devtools-opened', () => {
+      win.webContents.closeDevTools()
     })
   }
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
+  win.on('maximize', () => {
+    win.webContents.send('maximize')
+  })
+
+  win.on('unmaximize', () => {
+    win.webContents.send('unmaximize')
+  })
+
+  win.on('closed', () => {
+    win = null
   })
 }
 
@@ -52,5 +64,5 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) createWindow()
+  if (win === null) createWindow()
 })
