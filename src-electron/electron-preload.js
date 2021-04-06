@@ -1,10 +1,11 @@
 import { contextBridge, remote, ipcRenderer } from 'electron'
+import { Dialog } from 'quasar'
 const os = require('os')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const jf = require('jsonfile')
 
-const { BrowserWindow } = remote
+const { BrowserWindow, shell } = remote
 
 contextBridge.exposeInMainWorld('electron', {
   minimize() {
@@ -19,12 +20,28 @@ contextBridge.exposeInMainWorld('electron', {
     else win.maximize()
   },
 
+  allWindows() {
+    return BrowserWindow.getAllWindows()
+  },
+
   close() {
     BrowserWindow.getFocusedWindow().close()
   },
 
   isMaximized() {
     return BrowserWindow.getFocusedWindow().isMaximized()
+  },
+
+  openOsInformation() {
+    shell.openPath(osFullFile)
+  },
+
+  openOsWindow() {
+    const win = new BrowserWindow({
+      width: 800,
+      height: 600
+    })
+    win.loadURL('https://github.com')
   },
 
   $on(channel, func) {
@@ -69,8 +86,5 @@ contextBridge.exposeInMainWorld('node', {
     }
 
     return data
-  },
-  openOsInformation() {
-    remote.shell.openPath(osFullFile)
   }
 })

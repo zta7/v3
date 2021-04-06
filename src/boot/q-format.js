@@ -7,9 +7,6 @@ format.humanMemorySize = (v, from, to = 'gb') => {
   ]
   const i = types.findIndex(e => new RegExp(`^${e[0]}$`, 'i').test(from))
   const i2 = types.findIndex(e => new RegExp(`^${e[0]}$`, 'i').test(to))
-
-  console.log(i, i2)
-
   if (i === -1 || i2 === -1) return v
 
   const multiple = (small, bigger) => {

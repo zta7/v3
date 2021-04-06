@@ -1,10 +1,12 @@
 const state = {
-  fullscreen: 1
 }
 
 const mutations = {
-  setFullscreen(state, v) {
-    state.fullscreen = v
+  init(state, obj) {
+    Object.assign(state, obj)
+  },
+  set(state, { key, value }) {
+    state[key] = value
   }
 }
 

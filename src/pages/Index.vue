@@ -4,7 +4,10 @@
       <q-item>
         <q-item-section class='text-h6'>OS Information</q-item-section>
         <q-item-section side>
-          <q-btn icon='edit' flat round color='primary' dense @click='openOsFile' />
+          <q-btn-group flat>
+            <q-btn icon='launch' flat round dense color='positive' @click='openOsWindow' />
+            <q-btn icon='edit' flat round dense color='primary' @click='openOsFile' />
+          </q-btn-group>
         </q-item-section>
       </q-item>
       <q-separator />
@@ -29,39 +32,6 @@
               <span v-else>{{ v }}</span>
             </div>
           </div>
-
-          <!-- <div v-if='os.platform'>
-            <span class='text-subtitle2'>platform</span>
-            <span>{{ os.platform }}</span>
-          </div>
-          <div v-if='os.release'>
-            <span class='text-subtitle2'>release</span>
-            <span>{{ os.release }}</span>
-          </div>
-          <div v-if='os.arch'>
-            <span class='text-subtitle2'>arch</span>
-            <span>{{ os.arch }}</span>
-          </div>
-          <div v-if='os.cpus'>
-            <span class='text-subtitle2'>cpus</span>
-            <span>{{ os.cpus.length }}</span>
-          </div>
-          <div v-if='os.freemem'>
-            <span class='text-subtitle2'>freemem</span>
-            <span>{{ format.humanMemorySize(os.freemem, 'byte', 'GB') }}</span>
-          </div>
-          <div v-if='os.homedir'>
-            <span class='text-subtitle2'>homedir</span>
-            <span>{{ os.homedir }}</span>
-          </div>
-          <div v-if='os.hostname'>
-            <span class='text-subtitle2'>hostname</span>
-            <span>{{ os.hostname }}</span>
-          </div>
-          <div v-if='os.networkInterfaces'>
-            <span class='text-subtitle2'>networkInterfaces</span>
-            <span>{{ os.networkInterfaces }}</span>
-          </div> -->
         </div>
       </q-card-section>
     </q-card>
@@ -83,7 +53,8 @@ export default defineComponent({
       }, 5000)
     }
 
-    const openOsFile = () => window.node.openOsInformation()
+    const openOsFile = () => window.electron.openOsInformation()
+    const openOsWindow = () => window.electron.openOsWindow()
 
     onMounted(() => {
       os_timber()
@@ -96,7 +67,8 @@ export default defineComponent({
     return {
       os,
       format,
-      openOsFile
+      openOsFile,
+      openOsWindow
     }
   }
 })

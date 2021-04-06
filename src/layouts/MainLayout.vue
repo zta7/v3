@@ -2,14 +2,12 @@
   <q-layout view='lHh Lpr lFf'>
     <q-header>
       <q-bar dense class='bg-teal text-white row no-wrap justify-between'>
+        <left-bar v-model='drawerLeft' />
         <div id='_header' class='col-grow full-height' />
-        <q-btn-group flat>
-          <q-btn icon='minimize' flat round @click='minimize()' />
-          <q-btn :icon='isMaximized ? "mdi-window-restore" : "mdi-window-maximize"' flat round @click='toggleMaximize()' />
-          <q-btn icon='close' flat round @click='close()' />
-        </q-btn-group>
+        <right-bar />
       </q-bar>
     </q-header>
+    <left-drawer v-model='drawerLeft' />
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -17,37 +15,29 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref } from 'vue'
+import { LocalStorage } from 'quasar'
+import rightBar from './MainLayout/rightBar'
+import leftBar from './MainLayout/leftBar'
+import LeftDrawer from './MainLayout/leftDrawer'
 
 export default defineComponent({
   name: 'MainLayout',
+  components: {
+    rightBar,
+    leftBar,
+    LeftDrawer
+  },
   setup() {
-    const isMaximized = ref(undefined)
-
-    onMounted(() => {
-      isMaximized.value = window.electron.isMaximized()
-    })
-
-    const minimize = () => {
-      window.electron.minimize()
-    }
-
-    const toggleMaximize = () => {
-      window.electron.toggleMaximize()
-    }
-
-    const close = () => {
-      window.electron.close()
-    }
-
-    window.electron.$on('maximize', () => isMaximized.value = true)
-    window.electron.$on('unmaximize', () => isMaximized.value = false)
+    const confirm = ref(false)
+    const drawerLeft = ref(false)
+    const isNightMode = ref(LocalStorage.getItem('isNightMode') || false)
 
     return {
-      minimize,
-      toggleMaximize,
       close,
-      isMaximized
+      isNightMode,
+      drawerLeft,
+      confirm
     }
   }
 })
