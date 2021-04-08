@@ -1,12 +1,16 @@
 <template>
-  <q-item v-ripple tag='label' @click='drawerLeft = false; visible = true'>
+  <q-item v-ripple tag='label' @click='click()'>
     <q-item-section avatar>
       <q-icon name='mdi-cog' />
     </q-item-section>
     <q-item-section>Settings</q-item-section>
   </q-item>
 
-  <box-dialog :visible='visible' :title='title' />
+  <box-dialog v-model='visible' :title='title'>
+    <!-- <template #btn>
+    </template> -->
+    123
+  </box-dialog>
 </template>
 <script>
 import { defineComponent, inject, ref } from 'vue'
@@ -20,10 +24,16 @@ export default defineComponent({
     const visible = ref(false)
     const title = 'Settings'
 
+    const click = () => {
+      drawerLeft.value = false
+      visible.value = true
+    }
+
     return {
       drawerLeft,
       visible,
-      title
+      title,
+      click
     }
   }
 })

@@ -1,10 +1,21 @@
 <template>
   <q-dialog :model-value='dialog' @update:model-value='update'>
-    <q-card style='width: 360px; top: 5vh; bottom: 5vh'>
+    <q-card style='width: 420px'>
       <q-card-section>
-        <div class='text-h6'>{{ title }}</div>
+        <q-item class='no-padding' dense>
+          <q-item-section class='text-h6'>
+            {{ title }}
+          </q-item-section>
+          <q-item-section side>
+            <q-btn-group flat>
+              <slot name='btn' />
+              <q-btn v-close-popup icon='close' flat round dense />
+            </q-btn-group>
+          </q-item-section>
+        </q-item>
       </q-card-section>
-      <q-card-section style='max-height: 50vh' class='scroll'>
+      <q-separator size='8px' class='inset-shadow inset-shadow-down' />
+      <q-card-section style='max-height: 80vh' class='scroll'>
         <slot />
       </q-card-section>
       <q-separator />
@@ -28,7 +39,6 @@ export default defineComponent({
   setup(props, { emit }) {
     const dialog = ref(false)
     const update = v => {
-      console.log(v)
       emit('update:modelValue', v)
     }
 
