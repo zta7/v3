@@ -1,18 +1,19 @@
 const state = {
+  MinWindowWidth: 360,
+  MinWindioHeight: 720
 }
 
 const mutations = {
-  init(state, obj) {
-    Object.assign(state, obj)
-  },
-  set(state, { key, value }) {
-    state[key] = value
-  }
+
+}
+
+const getters = {
 }
 
 export default {
   namespaced: true,
   mutations,
+  getters,
   // actions,
   state
 }

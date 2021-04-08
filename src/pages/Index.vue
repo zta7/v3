@@ -41,10 +41,9 @@
 <script>
 import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import { format } from 'quasar'
-
 export default defineComponent({
   name: 'PageIndex',
-  setup(props, context) {
+  setup() {
     const os = ref({})
     const os_timber = () => {
       os.value = window.node.osInformation()

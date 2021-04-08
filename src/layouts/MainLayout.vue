@@ -2,12 +2,12 @@
   <q-layout view='lHh Lpr lFf'>
     <q-header>
       <q-bar dense class='bg-teal text-white row no-wrap justify-between'>
-        <left-bar v-model='drawerLeft' />
+        <left-bar />
         <div id='_header' class='col-grow full-height' />
         <right-bar />
       </q-bar>
     </q-header>
-    <left-drawer v-model='drawerLeft' />
+    <left-drawer />
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -15,11 +15,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import { LocalStorage } from 'quasar'
-import rightBar from './MainLayout/rightBar'
-import leftBar from './MainLayout/leftBar'
-import LeftDrawer from './MainLayout/leftDrawer'
+import { defineComponent, ref, provide } from 'vue'
+import rightBar from './MainLayout/RightBar'
+import leftBar from './MainLayout/LeftBar'
+import LeftDrawer from './MainLayout/LeftDrawer'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -31,11 +30,10 @@ export default defineComponent({
   setup() {
     const confirm = ref(false)
     const drawerLeft = ref(false)
-    const isNightMode = ref(LocalStorage.getItem('isNightMode') || false)
 
+    provide('drawerLeft', drawerLeft)
     return {
       close,
-      isNightMode,
       drawerLeft,
       confirm
     }

@@ -1,23 +1,15 @@
 <template>
   <q-btn-group flat>
-    <q-btn icon='menu' flat round @click='toogleDrawerLeft()' />
+    <q-btn icon='menu' flat round @click='drawerLeft = !drawerLeft' />
   </q-btn-group>
 </template>
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 export default defineComponent({
-  props: {
-    drawerLeft: {
-      type: Boolean
-    }
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const toogleDrawerLeft = () => {
-      emit('update:modelValue', !props.drawerLeft.value)
-    }
+  setup() {
+    const drawerLeft = inject('drawerLeft')
     return {
-      toogleDrawerLeft
+      drawerLeft
     }
   }
 })
