@@ -9,6 +9,7 @@
 /* eslint-env node */
 const ESLintPlugin = require('eslint-webpack-plugin')
 const { configure } = require('quasar/wrappers')
+const path = require('path')
 
 module.exports = configure((/* ctx */) => {
   return {
@@ -60,6 +61,18 @@ module.exports = configure((/* ctx */) => {
       // showProgress: false,
       // gzip: true,
       // analyze: true,
+
+      extendWebpack(cfg) {
+        cfg.resolve.alias = {
+          ...cfg.resolve.alias,
+          api: path.resolve(__dirname, './src/api'),
+          store: path.resolve(__dirname, './src/store'),
+          router: path.resolve(__dirname, './src/router'),
+          utils: path.resolve(__dirname, './src/utils'),
+          boot: path.resolve(__dirname, './src/boot'),
+          components: path.resolve(__dirname, './src/components')
+        }
+      },
 
       // Options below are automatically set depending on the env, set them if you want to override
       // extractCSS: false,

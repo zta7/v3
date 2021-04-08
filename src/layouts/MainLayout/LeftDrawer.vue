@@ -1,36 +1,26 @@
 <template>
   <q-drawer
-    :model-value='drawerLeft'
-    :width='280'
-    no-swipe-open
-    no-swipe-close
+    v-model='drawerLeft'
     behavior='mobile'
-    overlay
-    @update:model-value='updateModelValue'>
+    overlay>
     <user-profile />
     <left-drawer-list />
   </q-drawer>
 </template>
 <script>
-import { defineComponent } from 'vue'
-import userProfile from './leftDrawer/userProfile'
-import leftDrawerList from './leftDrawer/leftDrawerList'
+import { defineComponent, inject } from 'vue'
+import userProfile from './LeftDrawer/UserProfile'
+import leftDrawerList from './LeftDrawer/LeftDrawerList'
 
 export default defineComponent({
   components: {
     userProfile,
     leftDrawerList
   },
-  props: {
-    drawerLeft: {
-      type: Boolean
-    }
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const updateModelValue = v => emit('update:modelValue', v)
+  setup() {
+    const drawerLeft = inject('drawerLeft')
     return {
-      updateModelValue
+      drawerLeft
     }
   }
 })

@@ -2,21 +2,16 @@
   <router-view />
 </template>
 <script>
-import { defineComponent, onBeforeUnmount } from 'vue'
-import { useStore } from 'vuex'
-import { LocalStorage as ls } from 'quasar'
+import { defineComponent } from 'vue'
+import { Dark } from 'quasar'
+import LocalStorageUtil from 'utils/LocalStorage'
 
 export default defineComponent({
   name: 'App',
   setup() {
-    const $store = useStore()
-    const cfgs = ls.getAll()
-    $store.commit('app/init', cfgs)
-    onBeforeUnmount(() => {
-      for (const [k, v] of Object.entries($store.state.app)) ls.set(k, v)
+    LocalStorageUtil('isNightMode', v => {
+      Dark.set(v)
     })
-    return {
-    }
   }
 })
 </script>

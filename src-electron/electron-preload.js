@@ -1,5 +1,4 @@
 import { contextBridge, remote, ipcRenderer } from 'electron'
-import { Dialog } from 'quasar'
 const os = require('os')
 const mkdirp = require('mkdirp')
 const path = require('path')
@@ -24,7 +23,7 @@ contextBridge.exposeInMainWorld('electron', {
     return BrowserWindow.getAllWindows()
   },
 
-  close() {
+  close(cb) {
     BrowserWindow.getFocusedWindow().close()
   },
 
