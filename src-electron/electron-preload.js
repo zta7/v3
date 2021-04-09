@@ -4,9 +4,13 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 const jf = require('jsonfile')
 
-const { BrowserWindow, shell } = remote
+const { BrowserWindow, shell, webFrame } = remote
 
 contextBridge.exposeInMainWorld('electron', {
+  setZoom() {
+    webFrame.setZoomFactor(2)
+  },
+
   minimize() {
     BrowserWindow.getFocusedWindow().minimize()
   },
@@ -19,11 +23,14 @@ contextBridge.exposeInMainWorld('electron', {
     else win.maximize()
   },
 
-  allWindows() {
-    return BrowserWindow.getAllWindows()
+  closeAll() {
+    const wins = BrowserWindow.getAllWindows()
+    wins.forEach(w => {
+      w.close()
+    })
   },
 
-  close(cb) {
+  close() {
     BrowserWindow.getFocusedWindow().close()
   },
 

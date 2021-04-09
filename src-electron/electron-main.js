@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, sc } from 'electron'
+import { app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage, webFrame } from 'electron'
 import path from 'path'
 
 try {
@@ -66,3 +66,18 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (win === null) createWindow()
 })
+
+// let tray = null
+// app.whenReady().then(() => {
+//   tray = new Tray(path.resolve(__dirname, 'icons/icon.ico'))
+//   const contextMenu = Menu.buildFromTemplate([
+//     {
+//       label: 'Open'
+//     },
+//     {
+//       label: 'Quit'
+//     }
+//   ])
+//   tray.setToolTip('This is my application.')
+//   tray.setContextMenu(contextMenu)
+// })

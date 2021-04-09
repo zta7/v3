@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value='dialog' @update:model-value='update'>
+  <q-dialog :model-value='dialog' flat @update:model-value='update'>
     <q-card style='width: 420px'>
       <q-card-section>
         <q-item class='no-padding' dense>

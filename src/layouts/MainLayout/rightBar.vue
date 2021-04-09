@@ -21,9 +21,7 @@ export default defineComponent({
     }
 
     const close = () => {
-      const allWindows = window.electron.allWindows()
-      console.log(allWindows)
-      if (allWindows.length > 1) confirm.value = true
+      window.electron.closeAll()
 
       // window.electron.close()
     }
