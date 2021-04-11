@@ -8,53 +8,18 @@
 
   <box-dialog v-model='visible' :title='title'>
     <q-list dense>
-      <q-item v-ripple dense tag='label'>
-        <q-item-section thumbnail>
-          <q-icon name='aspect_ratio' />
-        </q-item-section>
-        <q-item-section>
-          Default interface scale
-        </q-item-section>
-        <q-item-section side>
-          <q-toggle />
-        </q-item-section>
-      </q-item>
-      <q-item dense>
-        <q-item-section thumbnail>
-          <q-icon />
-        </q-item-section>
-        <q-item-section>
-          <q-range
-            v-model='standard'
-            drag-only-range
-            markers
-            thumb-path=''
-            dense
-            :step='1'
-            :min='0'
-            :max='5'
-            @pan='pan' />
-        </q-item-section>
-      </q-item>
-      <q-item dense>
-        <q-item-section thumbnail>
-          <q-icon />
-        </q-item-section>
-        <q-item-section>
-          <div class='row justify-between'>
-            <span v-for='i in (0+5)/1' :key='i' class='col-grow text-center text-caption'>{{ i*100 }}%</span>
-          </div>
-        </q-item-section>
-      </q-item>
+      <scale-item />
     </q-list>
   </box-dialog>
 </template>
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import BoxDialog from 'components/Dialogs/Box'
+import boxDialog from 'components/Dialogs/Box'
+import scaleItem from 'components/Items/Scale'
 export default defineComponent({
   components: {
-    BoxDialog
+    boxDialog,
+    scaleItem
   },
   setup(props, context) {
     const drawerLeft = inject('drawerLeft')

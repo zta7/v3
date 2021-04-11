@@ -25,11 +25,15 @@ module.exports = configure((/* ctx */) => {
     boot: [
       'i18n',
       'axios',
-      'q-format'
+      'q-format',
+      'lodash'
     ],
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
-    css: ['app.css'],
+    css: [
+      'app.css',
+      '~dragula/dist/dragula.min.css'
+    ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -88,7 +92,7 @@ module.exports = configure((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
-      port: 9000,
+      port: 9002,
       open: true // opens browser window automatically
     },
 

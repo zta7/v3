@@ -10,16 +10,12 @@ catch (_) {
 
 let win
 function createWindow() {
-  const winStateKeeper = require('electron-window-state')
-  const winState = winStateKeeper({
-    defaultWidth: 1000,
-    defaultHeight: 800
-  })
+  const winStateManager = require('./utils/WindowState')
   win = new BrowserWindow({
-    x: winState.x,
-    y: winState.y,
-    width: winState.width,
-    height: winState.height,
+    x: 0,
+    y: 0,
+    width: 1000,
+    height: 800,
     frame: false,
     // https://www.electronjs.org/docs/api/browser-window#setting-backgroundcolor
     backgroundColor: '#ffffff',
@@ -30,7 +26,8 @@ function createWindow() {
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
     }
   })
-  winState.manage(win)
+  winStateManager(win)
+
   win.loadURL(process.env.APP_URL)
 
   if (process.env.DEBUGGING) {

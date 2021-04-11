@@ -14,7 +14,7 @@
           </q-item-section>
         </q-item>
       </q-card-section>
-      <q-separator size='8px' class='inset-shadow inset-shadow-down' />
+      <q-separator />
       <q-card-section style='max-height: 80vh' class='scroll'>
         <slot />
       </q-card-section>
