@@ -12,7 +12,6 @@ export default defineComponent({
     LocalStorageUtil('isNightMode', v => {
       Dark.set(v)
     })
-    LocalStorageUtil('windowScale')
     Mousetrap.bind('ctrl+-', () => { console.log('4') })
     Mousetrap.bind('ctrl+=', () => { console.log('4') })
   }

@@ -9,7 +9,7 @@
     </q-header>
     <left-drawer />
     <q-page-container>
-      <router-view />
+      <default-layout />
     </q-page-container>
   </q-layout>
 </template>
@@ -18,14 +18,16 @@
 import { defineComponent, ref, provide } from 'vue'
 import rightBar from './MainLayout/RightBar'
 import leftBar from './MainLayout/LeftBar'
-import LeftDrawer from './MainLayout/LeftDrawer'
+import leftDrawer from './MainLayout/LeftDrawer'
+import defaultLayout from './MainLayout/Layouts/Default'
 
 export default defineComponent({
   name: 'MainLayout',
   components: {
     rightBar,
     leftBar,
-    LeftDrawer
+    leftDrawer,
+    defaultLayout
   },
   setup() {
     const confirm = ref(false)

@@ -1,24 +1,38 @@
 'use strict'
 
-const _ = require('lodash')
-const Store = require('electron-store')
-const store = new Store()
+// import { ref } from 'vue'
 
-module.exports = function(win) {
-  const bounds = store.get('WindowBounds')
-  const isMaximized = store.get('isMaximized')
-  const Zoom = store.get('ZoomLevel')
+const { reactive } = require('vue')
+
+const state = reactive({
+  WindowBounds: undefined,
+  IsMaximized: undefined,
+  ZoomLevel: undefined
+})
+
+module.exports.manage = function(win) {
+  const Store = require('electron-store')
+  const store = new Store()
+  const _ = require('lodash')
 
   const init = () => {
-    if (isMaximized) win.maximize()
-    else win.setBounds(bounds)
+    state.WindowBounds = store.get('WindowBounds')
+    state.IsMaximized = store.get('IsMaximized')
+    state.ZoomLevel = store.get('ZoomLevel')
+
+    if (state.IsMaximized) win.maximize()
+    else win.setBounds(state.WindowBounds)
   }
 
   init()
 
   const saveState = _.debounce(() => {
+    const IsMaximized = win.isMaximized()
+    const WindowBounds = win.getBounds()
+    state.IsMaximized = IsMaximized
+    state.WindowBounds = WindowBounds
     store.set('WindowBounds', win.getBounds())
-    store.set('isMaximized', win.isMaximized())
+    store.set('IsMaximized', IsMaximized)
   }, 200)
 
   // win.once('ready-to-show', () => {
@@ -33,3 +47,5 @@ module.exports = function(win) {
     saveState()
   })
 }
+
+module.exports.state = state

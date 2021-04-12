@@ -1,14 +1,23 @@
-import { contextBridge, remote, ipcRenderer } from 'electron'
+import { contextBridge, remote, ipcRenderer, webFrame } from 'electron'
+const { BrowserWindow, shell, app } = remote
+
 const os = require('os')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const jf = require('jsonfile')
 
-const { BrowserWindow, shell, webFrame } = remote
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+const adapter = new FileSync(path.join(app.getPath('userData'), 'Settings.json'))
+const db = low(adapter)
 
 contextBridge.exposeInMainWorld('electron', {
-  setZoom() {
-    webFrame.setZoomFactor(2)
+  getZoom() {
+    return webFrame.getZoomFactor()
+  },
+  setZoom(v) {
+    db.set('Zoom', v).write()
+    webFrame.setZoomFactor(v)
   },
 
   minimize() {
@@ -63,7 +72,7 @@ contextBridge.exposeInMainWorld('electron', {
 })
 
 const osFile = 'os-list.json'
-const osFullFile = path.join(remote.app.getPath('userData'), osFile)
+const osFullFile = path.join(app.getPath('userData'), osFile)
 
 contextBridge.exposeInMainWorld('node', {
   osInformation() {

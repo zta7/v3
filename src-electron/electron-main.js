@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage, webFrame } from 'electron'
+import { app, BrowserWindow, nativeTheme } from 'electron'
 import path from 'path'
 
 try {
@@ -10,12 +10,16 @@ catch (_) {
 
 let win
 function createWindow() {
-  const winStateManager = require('./utils/WindowState')
+  const windowStateKeeper = require('electron-window-state')
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800
+  })
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: 1000,
-    height: 800,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     frame: false,
     // https://www.electronjs.org/docs/api/browser-window#setting-backgroundcolor
     backgroundColor: '#ffffff',
@@ -26,8 +30,7 @@ function createWindow() {
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
     }
   })
-  winStateManager(win)
-
+  mainWindowState.manage(win)
   win.loadURL(process.env.APP_URL)
 
   if (process.env.DEBUGGING) {
@@ -40,6 +43,18 @@ function createWindow() {
       win.webContents.closeDevTools()
     })
   }
+
+  win.once('ready-to-show', () => {
+    const low = require('lowdb')
+    const FileSync = require('lowdb/adapters/FileSync')
+    const adapter = new FileSync(path.join(app.getPath('userData'), 'Settings.json'))
+    const db = low(adapter)
+    db.defaults({ Zoom: 1 })
+      .write()
+    const Zoom = db.get('Zoom').value()
+    win.webContents.setZoomFactor(Zoom)
+    win.show()
+  })
 
   win.on('maximize', () => {
     win.webContents.send('maximize')
