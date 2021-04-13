@@ -1,5 +1,5 @@
 <template>
-  <router-view />
+  <router-view class='no-scroll' />
 </template>
 <script>
 import { defineComponent } from 'vue'
