@@ -3,18 +3,16 @@
     <q-layout container>
       <div class='fixed-full row no-wrap'>
         <folder-list />
-        <q-separator vertical />
+        <!-- <q-separator vertical /> -->
         <q-splitter
           v-model='splitterItemsContent'
           unit='px'
           :limits='splitterLimits'>
           <template #before>
-            <div class='q-pt-md column no-wrap full-height no-scroll'>
-              <div class='q-px-md text-center cursor-pointer'>
-                <q-input v-if='!isLeftEdge' outlined dense label='Search' autofocus />
-                <div v-else style='height: 40px'>
-                  <q-icon name='search' size='24px' @click='searchIconClick' />
-                </div>
+            <div class='column no-wrap full-height no-scroll'>
+              <div class='row items-center justify-center cursor-pointer' :style='boxStyle'>
+                <q-input v-if='!isLeftEdge' class='full-width q-px-md' filled dense label='Search' autofocus />
+                <q-icon v-else name='search' size='24px' @click='searchIconClick' />
               </div>
               <q-scroll-area class='col-grow'>
                 <item-list :item-width='splitterItemsContent' />
@@ -60,9 +58,16 @@ export default defineComponent({
       validateFn: v => v >= splitterLimits[0] && v <= splitterLimits[1] && Object.prototype.toString.call(v) === '[object Number]',
       toValue: splitterDefaultValue
     })
-
     const isLeftEdge = computed(() => splitterItemsContent.value === splitterLimits[0])
     provide('isLeftEdge', isLeftEdge)
+
+    const boxStyle = {
+      minWidth: '75px',
+      minHeight: '60px'
+      // padding: '0'
+    }
+
+    provide('boxStyle', boxStyle)
 
     const styleFn = (offset, height) => {
       return {
@@ -79,7 +84,8 @@ export default defineComponent({
       splitterItemsContent,
       splitterLimits,
       isLeftEdge,
-      searchIconClick
+      searchIconClick,
+      boxStyle
     }
   }
 })

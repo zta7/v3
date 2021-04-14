@@ -8,13 +8,12 @@
 </template>
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import { useQuasar } from 'quasar'
+import { Dialog } from 'quasar'
 
 import settingsDialog from 'components/Dialogs/Settings'
 
 export default defineComponent({
   setup(props, context) {
-    const $q = useQuasar()
     const drawerLeft = inject('drawerLeft')
     const title = 'Settings'
     const standard = ref({
@@ -25,7 +24,7 @@ export default defineComponent({
     const click = () => {
       drawerLeft.value = false
 
-      $q.dialog({
+      Dialog.create({
         component: settingsDialog
       })
     }

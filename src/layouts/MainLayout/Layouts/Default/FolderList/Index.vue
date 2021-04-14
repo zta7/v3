@@ -1,8 +1,9 @@
 <template>
-  <q-list class='column no-wrap list'>
-    <q-btn icon='menu' class='box' flat @click='drawerLeft = true' />
+  <q-list class='column no-wrap list bg-blue-grey-14 text-grey'>
+    <q-btn icon='menu' :style='boxStyle' flat @click='drawerLeft = true' />
     <q-btn
-      class='box no-border-radius'
+      class='no-border-radius'
+      :style='boxStyle'
       flat
       no-caps
       :class='{"bg-primary text-white" : allFolder.isActive}'
@@ -15,7 +16,8 @@
       <q-btn
         v-for='(b,i) in customFolder'
         :key='i'
-        class='box no-border-radius'
+        :style='boxStyle'
+        class='no-border-radius'
         :class='{"bg-primary text-white" : b.isActive}'
         stack
         no-caps
@@ -23,8 +25,20 @@
         @click='select(b.id)'>
         <q-icon :name='b.icon' />
         <span class='full-width text-caption' style='word-break: break-all'>{{ b.label }}</span>
+        <q-menu
+          touch-position
+          context-menu>
+          <q-list dense style='min-width: 100px'>
+            <q-item v-close-popup clickable>
+              <q-item-section>Edit Folder</q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable>
+              <q-item-section>Remove Folder</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
       </q-btn>
-      <q-btn flat class='box' no-caps>
+      <q-btn :style='boxStyle' flat no-caps @click='editFolder'>
         <q-icon name='checklist' />
         <span class='full-width text-caption'>Edit</span>
       </q-btn>
@@ -33,6 +47,8 @@
 </template>
 <script>
 import { defineComponent, inject, watch, reactive, computed } from 'vue'
+import folderDialog from 'components/Dialogs/Folder'
+import { Dialog } from 'quasar'
 
 export default defineComponent({
   setup() {
@@ -73,6 +89,11 @@ export default defineComponent({
     const select = id => {
       selectedFolder.value = id
     }
+    const editFolder = () => {
+      Dialog.create({
+        component: folderDialog
+      })
+    }
 
     return {
       drawerLeft,
@@ -80,7 +101,12 @@ export default defineComponent({
       allFolder,
       list,
       select,
-      customFolder
+      customFolder,
+      editFolder,
+      boxStyle: {
+        ...inject('boxStyle'),
+        padding: 0
+      }
     }
   }
 })

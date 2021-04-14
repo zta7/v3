@@ -6,7 +6,7 @@
       clickable
       :active='item.id === selectedItem'
       active-class='bg-blue text-white'
-      :style='{ width: itemWidth + "px" }'
+      :style='{ ...boxStyle, width: itemWidth + "px" }'
       @click='selectedItem = item.id'>
       <q-item-section avatar>
         <q-avatar>
@@ -61,7 +61,8 @@ export default defineComponent({
     return {
       items,
       selectedItem,
-      isLeftEdge
+      isLeftEdge,
+      boxStyle: inject('boxStyle')
     }
   }
 })
