@@ -5,25 +5,17 @@
     </q-item-section>
     <q-item-section>Settings</q-item-section>
   </q-item>
-
-  <box-dialog v-model='visible' :title='title'>
-    <q-list dense>
-      <scale-item />
-    </q-list>
-  </box-dialog>
 </template>
 <script>
 import { defineComponent, inject, ref } from 'vue'
-import boxDialog from 'components/Dialogs/Box'
-import scaleItem from 'components/Items/Scale'
+import { useQuasar } from 'quasar'
+
+import settingsDialog from 'components/Dialogs/Settings'
+
 export default defineComponent({
-  components: {
-    boxDialog,
-    scaleItem
-  },
   setup(props, context) {
+    const $q = useQuasar()
     const drawerLeft = inject('drawerLeft')
-    const visible = ref(false)
     const title = 'Settings'
     const standard = ref({
       min: 0,
@@ -32,12 +24,14 @@ export default defineComponent({
 
     const click = () => {
       drawerLeft.value = false
-      visible.value = true
+
+      $q.dialog({
+        component: settingsDialog
+      })
     }
 
     return {
       drawerLeft,
-      visible,
       title,
       click,
       standard

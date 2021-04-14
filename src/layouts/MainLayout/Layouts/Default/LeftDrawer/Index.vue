@@ -9,8 +9,8 @@
 </template>
 <script>
 import { defineComponent, inject } from 'vue'
-import userProfile from './LeftDrawer/UserProfile'
-import leftDrawerList from './LeftDrawer/LeftDrawerList'
+import userProfile from './UserProfile'
+import leftDrawerList from './LeftDrawerList'
 
 export default defineComponent({
   components: {

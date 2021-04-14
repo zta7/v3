@@ -1,18 +1,25 @@
 <template>
-  <router-view class='no-scroll' />
+  <router-view />
 </template>
 <script>
 import { defineComponent } from 'vue'
 import { Dark } from 'quasar'
 import LocalStorageUtil from 'utils/LocalStorage'
 import Mousetrap from 'mousetrap'
+
 export default defineComponent({
   name: 'App',
   setup() {
-    LocalStorageUtil('isNightMode', v => {
+    LocalStorageUtil({
+      key: 'isNightMode',
+      validateFn: v => /^true|false$/.test(v),
+      toValue: false
+    }, v => {
       Dark.set(v)
     })
-    LocalStorageUtil('selectedFolder')
+    LocalStorageUtil({
+      key: 'selectedFolder'
+    })
     Mousetrap.bind('ctrl+-', () => { console.log('4') })
     Mousetrap.bind('ctrl+=', () => { console.log('4') })
   }

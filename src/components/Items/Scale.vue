@@ -28,20 +28,8 @@
 </template>
 <script>
 import { defineComponent, shallowRef, triggerRef } from 'vue'
-// import $dragula from 'dragula'
-// import $Velocity from 'velocity-animate'
 export default defineComponent({
   setup(props, context) {
-    // console.log($Velocity)
-    // onMounted(() => {
-    //   const drake = $dragula([document.querySelector('#dragula_container')], {
-    //     direction: 'vertical',
-    //     moves: (el, handle) => el.classList.contains(selectedColor)
-    //   })
-    //   // drake.on('shadow', (el, source) => {
-    //   //   return !el.classList.contains(selectedColor)
-    //   // })
-    // })
     const color = 'bg-grey-3'
     const selectedColor = 'bg-primary'
 

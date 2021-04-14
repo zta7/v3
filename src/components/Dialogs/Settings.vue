@@ -1,10 +1,10 @@
 <template>
-  <q-dialog :model-value='dialog' flat @update:model-value='update'>
+  <q-dialog ref='dialogRef'>
     <q-card style='width: 420px'>
       <q-card-section>
         <q-item class='no-padding' dense>
           <q-item-section class='text-h6'>
-            {{ title }}
+            Settings
           </q-item-section>
           <q-item-section side>
             <q-btn-group flat>
@@ -16,36 +16,30 @@
       </q-card-section>
       <q-separator />
       <q-card-section style='max-height: 80vh' class='scroll'>
-        <slot />
+        <scale-item />
       </q-card-section>
       <q-separator />
     </q-card>
   </q-dialog>
 </template>
-<script>
-import { defineComponent, ref } from 'vue'
-export default defineComponent({
-  props: {
-    visible: {
-      type: Boolean,
-      required: true
-    },
-    title: {
-      type: String,
-      required: true
-    }
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const dialog = ref(false)
-    const update = v => {
-      emit('update:modelValue', v)
-    }
 
+<script>
+import scaleItem from 'components/Items/Scale'
+import { useDialogPluginComponent } from 'quasar'
+
+export default {
+  components: {
+    scaleItem
+  },
+  emits: [...useDialogPluginComponent.emits],
+  setup(props, { emit }) {
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
     return {
-      dialog,
-      update
+      dialogRef,
+      onDialogHide,
+      onDialogOK,
+      onDialogCancel
     }
   }
-})
+}
 </script>
