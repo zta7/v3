@@ -24,16 +24,10 @@ export default defineComponent({
     const click = () => {
       drawerLeft.value = false
 
-      let xxxx = 'xxxxxxx'
       Dialog.create({
-        component: settingsDialog,
-        componentProps: {
-          xxxx
-        }
+        component: settingsDialog
+
       })
-      setTimeout(() => {
-        xxxx = 'fafaa'
-      }, 3000)
     }
 
     return {

@@ -36,10 +36,6 @@
         </q-scroll-area>
       </div>
     </template>
-
-    <div>
-      <q-input v-for='e in list' :key='e.label' v-model='e.value' label='e.label' />
-    </div>
   </q-splitter>
 </template>
 <script>
@@ -85,28 +81,13 @@ export default defineComponent({
       immediate: true
     })
 
-    const list = shallowRef([
-      {
-        type: 'input',
-        label: 'lable1',
-        value: '123'
-      },
-      {
-        type: 'input',
-        label: 'lable2',
-        value: '123'
-      }
-    ])
-
-    console.log(list)
-
     return {
       boxStyle: inject('boxStyle'),
       itemContentInfo,
       toogleItemContentInfo,
       infoBinds,
-      splitter,
-      list
+      splitter
+
     }
   }
 })
