@@ -4,8 +4,6 @@ import { provide, watch, ref } from 'vue'
 export default ({ key, toValue, validateFn }, cb = () => {}) => {
   let v = LocalStorage.getItem(key)
 
-  if (validateFn) console.log(validateFn(v))
-
   if (validateFn && !validateFn(v)) v = toValue
 
   const _ref = ref(v)

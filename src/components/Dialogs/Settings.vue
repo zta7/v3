@@ -4,7 +4,7 @@
       <q-card-section>
         <q-item class='no-padding' dense>
           <q-item-section class='text-h6'>
-            Settings
+            Settings {{ a }}
           </q-item-section>
           <q-item-section side>
             <q-btn-group flat>
@@ -26,19 +26,32 @@
 <script>
 import scaleItem from 'components/Items/Scale'
 import { useDialogPluginComponent } from 'quasar'
-
+import { computed, toRef, watch } from 'vue'
 export default {
   components: {
     scaleItem
   },
+  props: ['xxxx'],
   emits: [...useDialogPluginComponent.emits],
   setup(props, { emit }) {
+    console.log(props)
+    // const propXxxx = toRef(props, 'xxxx')
+    const a = computed(() => `${props.xxxx}fk`)
+    console.log(a)
+    // watch(propXxxx, n => {
+    //   console.log(n)
+    // })
+    watch(props.xxxx, n => {
+      console.log(n)
+    })
+
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
     return {
       dialogRef,
       onDialogHide,
       onDialogOK,
-      onDialogCancel
+      onDialogCancel,
+      a
     }
   }
 }

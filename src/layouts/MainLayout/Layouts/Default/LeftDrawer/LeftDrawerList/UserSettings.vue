@@ -7,7 +7,7 @@
   </q-item>
 </template>
 <script>
-import { defineComponent, inject, ref } from 'vue'
+import { defineComponent, inject, ref, reactive } from 'vue'
 import { Dialog } from 'quasar'
 
 import settingsDialog from 'components/Dialogs/Settings'
@@ -24,9 +24,16 @@ export default defineComponent({
     const click = () => {
       drawerLeft.value = false
 
+      let xxxx = 'xxxxxxx'
       Dialog.create({
-        component: settingsDialog
+        component: settingsDialog,
+        componentProps: {
+          xxxx
+        }
       })
+      setTimeout(() => {
+        xxxx = 'fafaa'
+      }, 3000)
     }
 
     return {

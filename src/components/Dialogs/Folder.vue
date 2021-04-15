@@ -37,7 +37,9 @@
           </q-item>
         </q-list>
       </q-card-section>
-      <q-separator />
+      <q-card-section class='bg-grey-3 shadow-12'>
+        Create folders for different groups of chats and quickly switch between them.
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>

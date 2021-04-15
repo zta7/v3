@@ -3,9 +3,9 @@
     <q-layout container>
       <div class='fixed-full row no-wrap'>
         <folder-list />
-        <!-- <q-separator vertical /> -->
         <q-splitter
           v-model='splitterItemsContent'
+          class='col-grow'
           unit='px'
           :limits='splitterLimits'>
           <template #before>
@@ -21,11 +21,7 @@
           </template>
 
           <template #after>
-            <div class='q-pa-md column no-wrap full-height no-scroll'>
-              <!-- <q-scroll-area class='col-grow'> -->
-              <item-content />
-              <!-- </q-scroll-area> -->
-            </div>
+            <item-content />
           </template>
         </q-splitter>
       </div>
@@ -54,7 +50,7 @@ export default defineComponent({
     const splitterLimits = [75, 350]
     const splitterDefaultValue = 250
     const splitterItemsContent = LocalStorageUtil({
-      key: 'SplitterItemsContent',
+      key: 'splitterItemsContent',
       validateFn: v => v >= splitterLimits[0] && v <= splitterLimits[1] && Object.prototype.toString.call(v) === '[object Number]',
       toValue: splitterDefaultValue
     })
