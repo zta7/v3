@@ -1,5 +1,12 @@
 <template>
-  <q-splitter v-model='splitter.model' class='absolute-full' unit='px' :limits='splitter.limits' :disable='splitter.disable' reverse>
+  <q-splitter
+    :model-value='splitter.model'
+    class='absolute-full no-scroll'
+    :after-class='{ "hidden": !itemContentInfo}'
+    unit='px'
+    :limits='splitter.limits'
+    :disable='splitter.disable'
+    reverse>
     <template #before>
       <div class='column no-wrap full-height no-scroll'>
         <q-item :style='{ ...boxStyle }'>
@@ -18,30 +25,37 @@
         <q-separator />
         <q-scroll-area class='col-grow q-px-md'>
           <div v-for='n in 1000' :key='n'>
-            {{ n }}. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium
+            {{ n }}. XXXX
           </div>
         </q-scroll-area>
       </div>
     </template>
 
-    <template #after class='hidden'>
+    <template #after>
       <div class='full-height no-scroll column no-wrap'>
-        <div>
-          132
-        </div>
+        <q-item :style='{...boxStyle}'>
+          <q-item-section class='text-subtitle1'>
+            Info
+          </q-item-section>
+          <q-item-section side>
+            <q-btn icon='close' flat round @click='itemContentInfo = false' />
+          </q-item-section>
+        </q-item>
         <q-scroll-area class='col-grow'>
-          <div v-for='n in 100' :key='n'>
-            iafujioquwoieruqorjfqlkjrlwqjrelqjeqkl
-          </div>
+          <item-content-info />
         </q-scroll-area>
       </div>
     </template>
   </q-splitter>
 </template>
 <script>
-import { defineComponent, inject, computed, reactive, watch, ref, shallowRef } from 'vue'
+import { defineComponent, inject, computed, reactive } from 'vue'
 import LocalStorageUtil from 'utils/LocalStorage'
+import itemContentInfo from './ItemContentInfo/'
 export default defineComponent({
+  components: {
+    itemContentInfo
+  },
   setup() {
     const itemContentInfo = LocalStorageUtil({
       key: 'itemContentInfo',
@@ -66,7 +80,8 @@ export default defineComponent({
       const model = LocalStorageUtil({
         key: 'splitterItemcontentItemContentInfo',
         validateFn: v => v >= limits[0] && v <= limits[1] && Object.prototype.toString.call(v) === '[object Number]',
-        toValue: limits[0]
+        toValue: limits[0],
+        provide: false
       })
       splitter = reactive({
         limits,
@@ -75,19 +90,12 @@ export default defineComponent({
       })
     }
 
-    watch(itemContentInfo, n => {
-      if (!n) splitter.model = 0
-    }, {
-      immediate: true
-    })
-
     return {
       boxStyle: inject('boxStyle'),
       itemContentInfo,
       toogleItemContentInfo,
       infoBinds,
       splitter
-
     }
   }
 })

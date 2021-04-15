@@ -7,7 +7,7 @@
   </q-item>
 </template>
 <script>
-import { defineComponent, inject, ref, reactive } from 'vue'
+import { defineComponent, inject, ref } from 'vue'
 import { Dialog } from 'quasar'
 
 import settingsDialog from 'components/Dialogs/Settings'

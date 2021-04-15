@@ -54,6 +54,7 @@ export default defineComponent({
       validateFn: v => v >= splitterLimits[0] && v <= splitterLimits[1] && Object.prototype.toString.call(v) === '[object Number]',
       toValue: splitterDefaultValue
     })
+
     const isLeftEdge = computed(() => splitterItemsContent.value === splitterLimits[0])
     provide('isLeftEdge', isLeftEdge)
 

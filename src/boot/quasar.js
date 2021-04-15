@@ -1,6 +1,6 @@
-import { useQuasar, QScrollArea } from 'quasar'
+// import { QScrollArea } from 'quasar'
 
-console.log(QScrollArea)
+// console.log(QScrollArea)
 
 // const dark = [
 //   'QField', 'QBar', 'QCard', 'QColor', 'QExpansionItem', 'QInnerLoading', 'QItem',

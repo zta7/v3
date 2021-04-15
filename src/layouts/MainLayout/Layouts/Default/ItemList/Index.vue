@@ -4,10 +4,10 @@
       v-for='item in items'
       :key='item.id'
       clickable
-      :active='item.id === selectedItem'
+      :active='item.id === selectedItemId'
       active-class='bg-blue text-white'
       :style='{ ...boxStyle, width: itemWidth + "px" }'
-      @click='selectedItem = item.id'>
+      @click='selectedItemId = item.id'>
       <q-item-section avatar>
         <q-avatar>
           <img :src='item.avatar'>
@@ -33,7 +33,7 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, ref, inject } from 'vue'
+import { defineComponent, ref, inject, provide, computed } from 'vue'
 export default defineComponent({
   props: {
     itemWidth: {
@@ -57,10 +57,12 @@ export default defineComponent({
         ...item
       }
     })
-    const selectedItem = ref(2)
+    const selectedItemId = ref(2)
+    const selectedItem = computed(() => items.find(e => e.id === selectedItemId.value))
+    provide('selectedItem', selectedItem)
     return {
       items,
-      selectedItem,
+      selectedItemId,
       isLeftEdge,
       boxStyle: inject('boxStyle')
     }
