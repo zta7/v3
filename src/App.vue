@@ -18,7 +18,7 @@ export default defineComponent({
       Dark.set(v)
     })
     LocalStorageUtil({
-      key: 'selectedFolder'
+      key: 'selectedFolderId'
     })
     Mousetrap.bind('ctrl+-', () => { console.log('4') })
     Mousetrap.bind('ctrl+=', () => { console.log('4') })

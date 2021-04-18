@@ -6,25 +6,25 @@
       :style='boxStyle'
       flat
       no-caps
-      :class='{"bg-primary text-white" : allFolder.isActive}'
+      :class='{"bg-primary text-white" : selectedFolderId === allFolder.id}'
       @click='select(allFolder.id)'>
-      <q-icon :name='allFolder.icon' />
+      <q-icon :name='selectedFolderId === allFolder.id ? "mdi-forum-outline" : "mdi-forum"' />
       <span class='full-width text-caption'>{{ allFolder.label }}</span>
     </q-btn>
     <q-scroll-area
       class='column no-wrap scroll col-grow no-scroll'>
-      <div :id='dragContaierId'>
+      <div ref='dragContainer'>
         <q-btn
           v-for='(b,i) in customFolder'
           :key='i'
           :style='boxStyle'
           class='no-border-radius drag'
-          :class='{"bg-primary text-white" : b.isActive, }'
+          :class='{"bg-primary text-white" : selectedFolderId === b.id, }'
           stack
           no-caps
           flat
           @click='select(b.id)'>
-          <q-icon :name='b.icon' />
+          <q-icon :name='selectedFolderId === b.id ? "mdi-folder-outline": "mdi-folder"' />
           <span class='full-width text-caption' style='word-break: break-all'>{{ b.label }}</span>
           <q-menu
             touch-position
@@ -40,7 +40,7 @@
           </q-menu>
         </q-btn>
       </div>
-      <q-btn :style='boxStyle' flat no-caps @click='editFolder'>
+      <q-btn :style='boxStyle' flat no-caps @click='editFolders'>
         <q-icon name='checklist' />
         <span class='full-width text-caption'>Edit</span>
       </q-btn>
@@ -48,94 +48,79 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, inject, watch, reactive, computed, onMounted } from 'vue'
+import { defineComponent, inject, onMounted, ref } from 'vue'
 import folderDialog from 'components/Dialogs/Folder'
 import { Dialog } from 'quasar'
 import { Sortable } from '@shopify/draggable'
+import { $db } from 'boot/dexie'
+
 export default defineComponent({
   setup() {
     const drawerLeft = inject('drawerLeft')
-    const selectedFolder = inject('selectedFolder')
-    const list = reactive([
-      {
-        id: 'All Chats',
-        icon: 'mdi-forum-outline',
-        label: 'All chats'
-      },
+    const selectedFolderId = inject('selectedFolderId')
+
+    const allFolder = {
+      id: 'All Chats',
+      label: 'All chats'
+    }
+    const customFolder = [
       {
         id: '1',
-        icon: 'mdi-folder-outline',
         label: '1'
       },
       {
         id: '2',
-        icon: 'mdi-folder-outline',
         label: '2'
       },
       {
         id: '3',
-        icon: 'mdi-folder-outline',
         label: '3'
       },
       {
         id: '4',
-        icon: 'mdi-folder-outline',
         label: '4'
       }
-    ])
-
-    const allFolder = computed(() => list[0])
-    const customFolder = computed(() => list.slice(1, list.length))
-
-    watch(selectedFolder, (n, o) => {
-      const active = list.find(e => e.id === n)
-      const preActive = list.find(e => e.id === o)
-      const iconOutline = '-outline'
-      if (active) {
-        active.icon = active.icon.replace(`${iconOutline}`, '')
-        active.isActive = true
-      }
-      if (preActive) {
-        preActive.icon = `${preActive.icon}${iconOutline}`
-        preActive.isActive = false
-      }
-    }, {
-      immediate: true
-    })
+    ]
 
     const select = id => {
-      selectedFolder.value = id
+      selectedFolderId.value = id
     }
-    const editFolder = () => {
+    const editFolders = () => {
       Dialog.create({
         component: folderDialog
+      }).onOk(async({ folders, deletes }) => {
+        $db.transaction('rw', $db.folders, async() => {
+          const puts = folders.filter(f => !deletes.includes(f.id))
+          await $db.folders.bulkPut(puts)
+          await $db.folders.bulkDelete(deletes)
+        })
       })
     }
-
-    const dragContaierId = 'custom-folder-container'
-
+    const dragContainer = ref(null)
     onMounted(() => {
-      const droppable = new Sortable(document.getElementById(dragContaierId), {
+      const sortable = new Sortable(dragContainer.value, {
         draggable: '.drag',
         mirror: {
-          // appendTo: containerSelector,
-          // constrainDimensions: true
+          constrainDimensions: true,
+          xAxis: false
         }
       })
-      droppable.on('drag:start', evt => console.log(evt))
-      droppable.on('drag:move', () => console.log('drag:move'))
-      droppable.on('drag:stop', () => console.log('drag:stop'))
+      sortable.on('sortable:stop', evt => {
+        if (dragContainer.value === evt.newContainer && dragContainer.value === evt.oldContainer && evt.oldIndex !== evt.newIndex) {
+          // 更新数据就好了
+        }
+      })
     })
 
     return {
+      dragContainer,
       drawerLeft,
-      selectedFolder,
+      selectedFolderId,
       allFolder,
-      list,
+      // list,
       select,
       customFolder,
-      editFolder,
-      dragContaierId,
+      editFolders,
       boxStyle: {
         ...inject('boxStyle'),
         padding: 0

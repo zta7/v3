@@ -52,6 +52,7 @@
 import { defineComponent, inject, computed, reactive } from 'vue'
 import LocalStorageUtil from 'utils/LocalStorage'
 import itemContentInfo from './ItemContentInfo/'
+
 export default defineComponent({
   components: {
     itemContentInfo

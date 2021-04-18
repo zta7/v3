@@ -15,7 +15,7 @@
                 <q-icon v-else name='search' size='24px' @click='searchIconClick' />
               </div>
               <q-scroll-area class='col-grow'>
-                <item-list :item-width='splitterItemsContent' />
+                <item-list :item-width='splitterItemsContent' class='no-scroll' />
               </q-scroll-area>
             </div>
           </template>
@@ -61,7 +61,6 @@ export default defineComponent({
     const boxStyle = {
       minWidth: '75px',
       minHeight: '60px'
-      // padding: '0'
     }
 
     provide('boxStyle', boxStyle)

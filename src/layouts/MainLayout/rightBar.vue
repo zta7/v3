@@ -29,7 +29,7 @@ export default defineComponent({
     const state = reactive(window.electron.state)
 
     onMounted(() => {
-      isMaximized.value = window.electron.isMaximized()
+      // isMaximized.value = window.electron.isMaximized()
       window.electron.$on('maximize', () => isMaximized.value = true)
       window.electron.$on('unmaximize', () => isMaximized.value = false)
     })
