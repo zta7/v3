@@ -30,17 +30,17 @@
             touch-position
             context-menu>
             <q-list dense style='min-width: 100px'>
-              <q-item v-close-popup clickable>
+              <q-item v-close-popup clickable @click='onEditFolder(b)'>
                 <q-item-section>Edit Folder</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable>
-                <q-item-section>Remove Folder</q-item-section>
+              <q-item v-close-popup clickable @click='onRemoveFolder(b.id)'>
+                <q-item-section>Remove</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
         </q-btn>
       </div>
-      <q-btn :style='boxStyle' flat no-caps @click='editFolders'>
+      <q-btn :style='boxStyle' flat no-caps @click='onEditFolders'>
         <q-icon name='checklist' />
         <span class='full-width text-caption'>Edit</span>
       </q-btn>
@@ -48,10 +48,12 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, inject, onMounted, shallowRef } from 'vue'
-import folderDialog from 'components/Dialogs/Folder'
+import { defineComponent, inject, reactive } from 'vue'
+import foldersDialog from 'components/Dialogs/Folders'
+import confirmDialog from 'components/Dialogs/Confirm'
+import editFolderDialog from 'components/Dialogs/EditFolder'
+
 import { Dialog } from 'quasar'
-// import { Sortable } from '@shopify/draggable'
 import { $db } from 'boot/dexie'
 
 export default defineComponent({
@@ -63,19 +65,22 @@ export default defineComponent({
       id: 'All',
       name: 'All chats'
     }
-    const customFolders = shallowRef([])
+    const customFolders = reactive([])
 
     $db.folders.toArray(arr => {
-      customFolders.value = arr
+      customFolders.push(...arr)
     })
 
     const select = id => {
       selectedFolderId.value = id
     }
 
-    const editFolders = () => {
+    const onEditFolders = () => {
       Dialog.create({
-        component: folderDialog
+        component: foldersDialog,
+        componentProps: {
+          folders: customFolders
+        }
       }).onOk(async({ folders, deletes }) => {
         $db.transaction('rw', $db.folders, async() => {
           const puts = folders.filter(f => !deletes.includes(f.id))
@@ -84,6 +89,30 @@ export default defineComponent({
         })
       })
     }
+
+    const onEditFolder = folder => {
+      Dialog.create({
+        component: editFolderDialog,
+        componentProps: {
+          folder
+        }
+      }).onOk(folder => {
+        $db.folders.put(folder)
+      })
+    }
+
+    const onRemoveFolder = id => {
+      Dialog.create({
+        component: confirmDialog,
+        componentProps: {
+          content: 'This will remove the folder, your items will not be deleted.',
+          confirmBtnLabel: 'Remove'
+        }
+      }).onOk(() => {
+        $db.folders.delete(id)
+      })
+    }
+
     const sortableOptions = {
       draggable: '.drag',
       mirror: {
@@ -91,30 +120,17 @@ export default defineComponent({
         xAxis: false
       }
     }
-    onMounted(() => {
-      // const sortable = new Sortable(dragContainer.value, {
-      //   draggable: '.drag',
-      //   mirror: {
-      //     constrainDimensions: true,
-      //     xAxis: false
-      //   }
-      // })
-      // sortable.on('sortable:stop', evt => {
-      //   if (dragContainer.value === evt.newContainer && dragContainer.value === evt.oldContainer && evt.oldIndex !== evt.newIndex) {
-      //     // 更新数据就好了
-      //   }
-      // })
-    })
 
     return {
-      // dragContainer,
+      onEditFolder,
+      onRemoveFolder,
       drawerLeft,
       selectedFolderId,
       allFolder,
       // list,
       select,
       customFolders,
-      editFolders,
+      onEditFolders,
       boxStyle: {
         ...inject('boxStyle'),
         padding: 0

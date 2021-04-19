@@ -54,6 +54,10 @@ export default {
       type: Object,
       required: true
     }
+    // items: {
+    //   type: Object,
+    //   required: true
+    // }
   },
 
   emits: [...useDialogPluginComponent.emits],
@@ -70,7 +74,7 @@ export default {
       onDialogHide,
       async onOKClick() {
         const r = await nameRef.value.validate()
-        if (r) onDialogOK(editFolder)
+        if (r) onDialogOK(cloneDeep(editFolder))
       },
       onCancelClick: onDialogCancel
     }

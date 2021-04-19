@@ -7,7 +7,7 @@
       </q-bar>
     </q-header>
     <q-page-container>
-      <default-layout />
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
@@ -15,13 +15,13 @@
 <script>
 import { defineComponent } from 'vue'
 import rightBar from './MainLayout/RightBar'
-import defaultLayout from './MainLayout/Layouts/Default'
+// import defaultLayout from './MainLayout/Layouts/Default'
 
 export default defineComponent({
   name: 'MainLayout',
   components: {
-    rightBar,
-    defaultLayout
+    rightBar
+    // defaultLayout
   }
 })
 </script>

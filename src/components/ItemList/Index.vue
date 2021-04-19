@@ -9,8 +9,9 @@
       :style='{ ...boxStyle, width: itemWidth + "px" }'
       @click='selectedItemId = item.id'>
       <q-item-section avatar>
-        <q-avatar>
-          <img :src='item.avatar'>
+        <q-avatar color='teal' text-color='white'>
+          <img v-if='item.avatar' :src='item.avatar'>
+          <span v-else>{{ item.name[0] }}</span>
           <q-badge v-show='isLeftEdge' color='info' class='absolute' style='bottom: -4px;right: -3px'>
             <span class='ellipsis' style='max-width: 24px'>1324</span>
           </q-badge>

@@ -1,73 +1,101 @@
 <template>
-  <q-page class='flex flex-center'>
-    <q-card bordered class='no-shadow' style='max-width: 750px'>
-      <q-item>
-        <q-item-section class='text-h6'>OS Information</q-item-section>
-        <q-item-section side>
-          <q-btn-group flat>
-            <q-btn icon='launch' flat round dense color='positive' @click='openOsWindow' />
-            <q-btn icon='edit' flat round dense color='primary' @click='openOsFile' />
-          </q-btn-group>
-        </q-item-section>
-      </q-item>
-      <q-separator />
-      <q-card-section>
-        <div class='column no-wrap'>
-          <div v-for='[k,v] of Object.entries(os)' :key='k' class='row no-wrap'>
-            <div class='text-subtitle2 col-2'>{{ k }}</div>
-            <q-space />
-            <div class='col-9'>
-              <span v-if='k === "cpus"'> {{ v.length }} </span>
-              <span v-else-if='k === "totalmem"'>{{ format.humanMemorySize(os.totalmem, 'byte', 'GB') }}</span>
-              <span v-else-if='k === "freemem"'>{{ format.humanMemorySize(os.freemem, 'byte', 'GB') }}</span>
-              <span v-else-if='k === "homedir"'>{{ v }}</span>
-              <div v-else-if='k === "networkInterfaces"' class='column no-wrap'>
-                <div v-for='[k2,v2] of Object.entries(v)' :key='k2' class='column no-wrap'>
-                  <span>{{ k2 }}</span>
-                  <div v-for='(v3, i) in v2' :key='i' class='column no-wrap q-ml-md'>
-                    <span>{{ v3 }}</span>
-                  </div>
-                </div>
+  <q-page :style-fn='styleFn'>
+    <q-layout container>
+      <div class='fixed-full row no-wrap'>
+        <folder-list />
+        <q-splitter
+          v-model='splitterItemsContent'
+          class='col-grow'
+          unit='px'
+          :limits='splitterLimits'>
+          <template #before>
+            <div class='column no-wrap full-height no-scroll'>
+              <div class='row items-center justify-center cursor-pointer' :style='boxStyle'>
+                <q-input v-if='!isLeftEdge' class='full-width q-px-md' filled dense label='Search' autofocus />
+                <q-icon v-else name='search' size='24px' @click='onSearchIconClick' />
               </div>
-              <span v-else>{{ v }}</span>
+              <q-scroll-area class='col-grow'>
+                <item-list :item-width='splitterItemsContent' class='no-scroll' />
+              </q-scroll-area>
+              <q-separator />
+              <q-btn flat icon='add' dense @click='onNewItem()' />
             </div>
-          </div>
-        </div>
-      </q-card-section>
-    </q-card>
+          </template>
+
+          <template #after>
+            <router-view />
+          </template>
+        </q-splitter>
+      </div>
+      <left-drawer />
+    </q-layout>
   </q-page>
 </template>
-
 <script>
-import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
-import { format } from 'quasar'
+import { defineComponent, provide, ref, computed } from 'vue'
+import leftDrawer from 'components//LeftDrawer/'
+import folderList from 'components//FolderList'
+// import itemContent from 'components//ItemContent'
+import itemList from 'components//ItemList'
+import LocalStorageUtil from 'utils/LocalStorage'
+import newItemDialog from 'components/Dialogs/NewItem'
+import { Dialog } from 'quasar'
+import { $db } from 'boot/dexie'
 export default defineComponent({
-  name: 'PageIndex',
+  components: {
+    leftDrawer,
+    folderList,
+    // itemContent,
+    itemList
+  },
   setup() {
-    const os = ref({})
-    const os_timber = () => {
-      os.value = window.node.osInformation()
-      setInterval(() => {
-        os.value = window.node.osInformation()
-      }, 5000)
+    const drawerLeft = ref(false)
+    provide('drawerLeft', drawerLeft)
+
+    const splitterLimits = [75, 350]
+    const splitterDefaultValue = 250
+    const splitterItemsContent = LocalStorageUtil({
+      key: 'splitterItemsContent',
+      validateFn: v => v >= splitterLimits[0] && v <= splitterLimits[1] && Object.prototype.toString.call(v) === '[object Number]',
+      toValue: splitterDefaultValue
+    })
+
+    const isLeftEdge = computed(() => splitterItemsContent.value === splitterLimits[0])
+    provide('isLeftEdge', isLeftEdge)
+
+    const boxStyle = {
+      minWidth: '75px',
+      minHeight: '60px'
     }
 
-    const openOsFile = () => window.electron.openOsInformation()
-    const openOsWindow = () => window.electron.openOsWindow()
+    provide('boxStyle', boxStyle)
 
-    onMounted(() => {
-      os_timber()
-    })
+    const styleFn = (offset, height) => {
+      return {
+        height: `${height - offset}px`
+      }
+    }
 
-    onUnmounted(() => {
-      clearInterval(os_timber)
-    })
+    const onSearchIconClick = () => {
+      splitterItemsContent.value = splitterDefaultValue
+    }
+
+    const onNewItem = () => {
+      Dialog.create({
+        component: newItemDialog
+      }).onOk(item => {
+        $db.items.add(item)
+      })
+    }
 
     return {
-      os,
-      format,
-      openOsFile,
-      openOsWindow
+      onNewItem,
+      splitterItemsContent,
+      splitterLimits,
+      isLeftEdge,
+      onSearchIconClick,
+      boxStyle,
+      styleFn
     }
   }
 })

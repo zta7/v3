@@ -17,8 +17,8 @@
       <q-separator />
       <q-card-section style='max-height: 80vh' class='scroll no-padding'>
         <q-list>
-          <q-item-label header>My folders</q-item-label>
-          <q-item v-for='(f, i) in folders' :key='i' clickable @click='editFolder(f)'>
+          <q-item-label header>My Folders</q-item-label>
+          <q-item v-for='(f, i) in editFolders' :key='i' clickable @click='editFolder(f)'>
             <q-item-section avatar>
               <q-icon :name='f.icon || "mdi-folder-outline"' />
             </q-item-section>
@@ -44,7 +44,7 @@
       </q-card-section>
       <q-card-section class='q-px-none'>
         <q-banner dense class='bg-grey-3 text-grey q-px-md'>
-          Create folders for different groups of chats and quickly switch between them.
+          Create editFolders for different groups of chats and quickly switch between them.
         </q-banner>
       </q-card-section>
     </q-card>
@@ -56,25 +56,28 @@ import { useDialogPluginComponent, Dialog } from 'quasar'
 import { reactive } from 'vue'
 import newFolderDialog from './NewFolder'
 import editFolderDialog from './EditFolder'
-import { $db } from 'boot/dexie'
 import { cloneDeep } from 'lodash'
 
 export default {
+  props: {
+    folders: {
+      type: Array,
+      required: true
+    }
+  },
   emits: [...useDialogPluginComponent.emits],
   setup(props, { emit }) {
     const { dialogRef, onDialogOK } = useDialogPluginComponent()
 
-    const folders = reactive([])
+    const editFolders = reactive(cloneDeep(props.folders))
+    console.log(editFolders)
     const deletes = reactive(new Set())
-    $db.folders.toArray().then(arr => {
-      folders.push(...arr)
-    })
 
     const createFolder = () => {
       Dialog.create({
         component: newFolderDialog
       }).onOk(folder => {
-        folders.push(folder)
+        editFolders.push(folder)
       })
     }
 
@@ -85,8 +88,8 @@ export default {
           folder
         }
       }).onOk(folder => {
-        const i = folders.findIndex(f => f.id === folder.id)
-        if (i !== -1) folders[i] = folder
+        const i = editFolders.findIndex(f => f.id === folder.id)
+        if (i !== -1) editFolders[i] = folder
       })
     }
 
@@ -94,12 +97,12 @@ export default {
       dialogRef,
       ok() {
         onDialogOK({
-          folders: cloneDeep(folders),
+          folders: cloneDeep(editFolders),
           deletes: [...deletes]
         })
       },
       deletes,
-      folders,
+      editFolders,
       createFolder,
       editFolder,
       toggleDelete(id) {
