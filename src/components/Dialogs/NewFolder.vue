@@ -16,7 +16,7 @@
         </q-input>
       </q-card-section>
       <q-card-actions align='right'>
-        <q-btn label='Cancel' flat @click='onCancelClick' />
+        <q-btn label='Cancel' flat @click='onDialogHide' />
         <q-btn label='Create' flat @click='newFolder' />
       </q-card-actions>
     </q-card>
@@ -31,7 +31,7 @@ export default {
   emits: [...useDialogPluginComponent.emits],
 
   setup() {
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+    const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent()
     const name = ref('')
     const nameRef = ref(null)
     const newFolder = async() => {
@@ -50,8 +50,7 @@ export default {
       nameRef,
       dialogRef,
       onDialogHide,
-      newFolder,
-      onCancelClick: onDialogCancel
+      newFolder
     }
   }
 }

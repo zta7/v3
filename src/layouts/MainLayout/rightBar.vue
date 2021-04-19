@@ -6,7 +6,7 @@
   </q-btn-group>
 </template>
 <script>
-import { ref, onMounted, defineComponent, reactive } from 'vue'
+import { ref, onMounted, defineComponent } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -22,11 +22,7 @@ export default defineComponent({
 
     const close = () => {
       window.electron.closeAll()
-
-      // window.electron.close()
     }
-
-    const state = reactive(window.electron.state)
 
     onMounted(() => {
       // isMaximized.value = window.electron.isMaximized()
@@ -38,8 +34,7 @@ export default defineComponent({
       minimize,
       toggleMaximize,
       close,
-      isMaximized,
-      state
+      isMaximized
     }
   }
 })

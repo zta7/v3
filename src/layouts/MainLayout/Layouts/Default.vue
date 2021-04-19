@@ -12,11 +12,13 @@
             <div class='column no-wrap full-height no-scroll'>
               <div class='row items-center justify-center cursor-pointer' :style='boxStyle'>
                 <q-input v-if='!isLeftEdge' class='full-width q-px-md' filled dense label='Search' autofocus />
-                <q-icon v-else name='search' size='24px' @click='searchIconClick' />
+                <q-icon v-else name='search' size='24px' @click='onSearchIconClick' />
               </div>
               <q-scroll-area class='col-grow'>
                 <item-list :item-width='splitterItemsContent' class='no-scroll' />
               </q-scroll-area>
+              <q-separator />
+              <q-btn flat icon='add' dense @click='onNewItem()' />
             </div>
           </template>
 
@@ -36,6 +38,9 @@ import folderList from './Default/FolderList'
 import itemContent from './Default/ItemContent'
 import itemList from './Default/ItemList'
 import LocalStorageUtil from 'utils/LocalStorage'
+import newItemDialog from 'components/Dialogs/NewItem'
+import { Dialog } from 'quasar'
+import { $db } from 'boot/dexie'
 export default defineComponent({
   components: {
     leftDrawer,
@@ -71,17 +76,26 @@ export default defineComponent({
       }
     }
 
-    const searchIconClick = () => {
+    const onSearchIconClick = () => {
       splitterItemsContent.value = splitterDefaultValue
     }
 
+    const onNewItem = () => {
+      Dialog.create({
+        component: newItemDialog
+      }).onOk(item => {
+        $db.items.add(item)
+      })
+    }
+
     return {
-      styleFn,
+      onNewItem,
       splitterItemsContent,
       splitterLimits,
       isLeftEdge,
-      searchIconClick,
-      boxStyle
+      onSearchIconClick,
+      boxStyle,
+      styleFn
     }
   }
 })

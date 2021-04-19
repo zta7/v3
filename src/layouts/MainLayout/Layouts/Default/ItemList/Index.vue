@@ -33,7 +33,8 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, ref, inject, provide, computed } from 'vue'
+import { defineComponent, ref, inject, provide, computed, reactive } from 'vue'
+import { $db } from 'boot/dexie'
 export default defineComponent({
   props: {
     itemWidth: {
@@ -51,12 +52,10 @@ export default defineComponent({
       lastUpdateTime: 'Mon',
       unarchivedNumber: 1234
     }
-    const items = Array.from({ length: 20 }, (e, i) => {
-      return {
-        id: i,
-        ...item
-      }
-    })
+    const items = reactive([])
+
+    $db.items.toArray(arr => items.push(...arr))
+
     const selectedItemId = ref(2)
     const selectedItem = computed(() => items.find(e => e.id === selectedItemId.value))
     provide('selectedItem', selectedItem)

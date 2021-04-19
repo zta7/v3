@@ -9,13 +9,13 @@
       :class='{"bg-primary text-white" : selectedFolderId === allFolder.id}'
       @click='select(allFolder.id)'>
       <q-icon :name='selectedFolderId === allFolder.id ? "mdi-forum-outline" : "mdi-forum"' />
-      <span class='full-width text-caption'>{{ allFolder.label }}</span>
+      <span class='full-width text-caption'>{{ allFolder.name }}</span>
     </q-btn>
     <q-scroll-area
       class='column no-wrap scroll col-grow no-scroll'>
-      <div ref='dragContainer'>
+      <div v-sortable='sortableOptions'>
         <q-btn
-          v-for='(b,i) in customFolder'
+          v-for='(b,i) in customFolders'
           :key='i'
           :style='boxStyle'
           class='no-border-radius drag'
@@ -25,7 +25,7 @@
           flat
           @click='select(b.id)'>
           <q-icon :name='selectedFolderId === b.id ? "mdi-folder-outline": "mdi-folder"' />
-          <span class='full-width text-caption' style='word-break: break-all'>{{ b.label }}</span>
+          <span class='full-width text-caption' style='word-break: break-all'>{{ b.name }}</span>
           <q-menu
             touch-position
             context-menu>
@@ -48,10 +48,10 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, inject, onMounted, ref } from 'vue'
+import { defineComponent, inject, onMounted, shallowRef } from 'vue'
 import folderDialog from 'components/Dialogs/Folder'
 import { Dialog } from 'quasar'
-import { Sortable } from '@shopify/draggable'
+// import { Sortable } from '@shopify/draggable'
 import { $db } from 'boot/dexie'
 
 export default defineComponent({
@@ -60,31 +60,19 @@ export default defineComponent({
     const selectedFolderId = inject('selectedFolderId')
 
     const allFolder = {
-      id: 'All Chats',
-      label: 'All chats'
+      id: 'All',
+      name: 'All chats'
     }
-    const customFolder = [
-      {
-        id: '1',
-        label: '1'
-      },
-      {
-        id: '2',
-        label: '2'
-      },
-      {
-        id: '3',
-        label: '3'
-      },
-      {
-        id: '4',
-        label: '4'
-      }
-    ]
+    const customFolders = shallowRef([])
+
+    $db.folders.toArray(arr => {
+      customFolders.value = arr
+    })
 
     const select = id => {
       selectedFolderId.value = id
     }
+
     const editFolders = () => {
       Dialog.create({
         component: folderDialog
@@ -96,35 +84,42 @@ export default defineComponent({
         })
       })
     }
-    const dragContainer = ref(null)
+    const sortableOptions = {
+      draggable: '.drag',
+      mirror: {
+        constrainDimensions: true,
+        xAxis: false
+      }
+    }
     onMounted(() => {
-      const sortable = new Sortable(dragContainer.value, {
-        draggable: '.drag',
-        mirror: {
-          constrainDimensions: true,
-          xAxis: false
-        }
-      })
-      sortable.on('sortable:stop', evt => {
-        if (dragContainer.value === evt.newContainer && dragContainer.value === evt.oldContainer && evt.oldIndex !== evt.newIndex) {
-          // 更新数据就好了
-        }
-      })
+      // const sortable = new Sortable(dragContainer.value, {
+      //   draggable: '.drag',
+      //   mirror: {
+      //     constrainDimensions: true,
+      //     xAxis: false
+      //   }
+      // })
+      // sortable.on('sortable:stop', evt => {
+      //   if (dragContainer.value === evt.newContainer && dragContainer.value === evt.oldContainer && evt.oldIndex !== evt.newIndex) {
+      //     // 更新数据就好了
+      //   }
+      // })
     })
 
     return {
-      dragContainer,
+      // dragContainer,
       drawerLeft,
       selectedFolderId,
       allFolder,
       // list,
       select,
-      customFolder,
+      customFolders,
       editFolders,
       boxStyle: {
         ...inject('boxStyle'),
         padding: 0
-      }
+      },
+      sortableOptions
     }
   }
 })

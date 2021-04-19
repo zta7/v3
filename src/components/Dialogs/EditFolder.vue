@@ -64,7 +64,6 @@ export default {
     const nameRef = ref(null)
 
     return {
-
       nameRef,
       editFolder,
       dialogRef,

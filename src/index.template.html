@@ -20,3 +20,17 @@
     <div id="q-app"></div>
   </body>
 </html>
+
+<script>
+  document.body.addEventListener('mousedown', evt => {
+    const whitelist = ['INPUT']
+    const name = evt.target.nodeName
+    whitelist.includes(name) ? '' : evt.preventDefault()
+  })
+  // document.body.addEventListener('click', evt => {
+  //   console.log()
+  //   const whitelist = ['INPUT']
+  //   const name = evt.target.nodeName
+  //   whitelist.includes(name) ? '' : evt.preventDefault()
+  // })
+</script>
