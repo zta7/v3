@@ -1,13 +1,25 @@
 <template>
   <q-list>
-    <q-item
+    <avatar-item
+      v-for='item in items'
+      :key='item.id'
+      :badge='isLeftEdge'
+      display='lmr'
+      :item='item'
+      clickable
+      :active='item.id === selectedItemId'
+      active-class='bg-light-blue-5 text-white'
+      :style='{ ...boxStyle, width: itemWidth + "px" }'
+      @click='onSelectItem(item.id)' />
+
+    <!-- <q-item
       v-for='item in items'
       :key='item.id'
       clickable
       :active='item.id === selectedItemId'
       active-class='bg-blue text-white'
       :style='{ ...boxStyle, width: itemWidth + "px" }'
-      @click='selectedItemId = item.id'>
+      @click='onSelectItem(item.id)'>
       <q-item-section avatar>
         <q-avatar color='teal' text-color='white'>
           <img v-if='item.avatar' :src='item.avatar'>
@@ -30,13 +42,17 @@
           <span>{{ item.unarchivedNumber }}</span>
         </div>
       </q-item-section>
-    </q-item>
+    </q-item> -->
   </q-list>
 </template>
 <script>
-import { defineComponent, ref, inject, provide, computed, reactive } from 'vue'
-import { $db } from 'boot/dexie'
+import { defineComponent, inject, computed } from 'vue'
+import avatarItem from 'components/Items/Avatar'
+import { useStore } from 'vuex'
 export default defineComponent({
+  components: {
+    avatarItem
+  },
   props: {
     itemWidth: {
       type: Number,
@@ -44,24 +60,15 @@ export default defineComponent({
     }
   },
   setup() {
+    const $store = useStore()
     const isLeftEdge = inject('isLeftEdge')
-    const item = {
-      avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-      label: 'Brunch this weekend?',
-      perCaption: 'Janet',
-      caption: '-- I\'ll be in your neighborhood doing errands thisweekend. Do you want to grab brunch?',
-      lastUpdateTime: 'Mon',
-      unarchivedNumber: 1234
-    }
-    const items = reactive([])
+    const items = computed(() => $store.getters['app/folderItems'])
+    const selectedItemId = computed(() => $store.getters['app/selectedItemId'])
+    const onSelectItem = id => $store.commit('app/SetSelectedItemId', id)
 
-    $db.items.toArray(arr => items.push(...arr))
-
-    const selectedItemId = ref(2)
-    const selectedItem = computed(() => items.find(e => e.id === selectedItemId.value))
-    provide('selectedItem', selectedItem)
     return {
       items,
+      onSelectItem,
       selectedItemId,
       isLeftEdge,
       boxStyle: inject('boxStyle')

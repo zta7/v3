@@ -21,9 +21,9 @@
         <q-list>
           <q-item-label header>Includes Items</q-item-label>
 
-          <q-item clickable>
+          <q-item clickable @click='onAddItems()'>
             <q-item-section>
-              Add Item
+              Add Items
             </q-item-section>
           </q-item>
         </q-list>
@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, Dialog } from 'quasar'
+import addItemsDialog from 'components/Dialogs/AddItems'
 import { reactive, ref } from 'vue'
 import { cloneDeep } from 'lodash'
 
@@ -54,10 +55,6 @@ export default {
       type: Object,
       required: true
     }
-    // items: {
-    //   type: Object,
-    //   required: true
-    // }
   },
 
   emits: [...useDialogPluginComponent.emits],
@@ -66,8 +63,18 @@ export default {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
     const editFolder = reactive(cloneDeep(props.folder))
     const nameRef = ref(null)
-
+    const onAddItems = folder => {
+      Dialog.create({
+        component: addItemsDialog,
+        componentProps: {
+          folder: editFolder
+        }
+      }).onOk(d => {
+        console.log(d)
+      })
+    }
     return {
+      onAddItems,
       nameRef,
       editFolder,
       dialogRef,

@@ -70,7 +70,6 @@ export default {
     const { dialogRef, onDialogOK } = useDialogPluginComponent()
 
     const editFolders = reactive(cloneDeep(props.folders))
-    console.log(editFolders)
     const deletes = reactive(new Set())
 
     const createFolder = () => {

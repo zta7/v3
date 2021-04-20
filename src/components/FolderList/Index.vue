@@ -7,7 +7,7 @@
       flat
       no-caps
       :class='{"bg-primary text-white" : selectedFolderId === allFolder.id}'
-      @click='select(allFolder.id)'>
+      @click='onSelect(allFolder.id)'>
       <q-icon :name='selectedFolderId === allFolder.id ? "mdi-forum-outline" : "mdi-forum"' />
       <span class='full-width text-caption'>{{ allFolder.name }}</span>
     </q-btn>
@@ -23,7 +23,7 @@
           stack
           no-caps
           flat
-          @click='select(b.id)'>
+          @click='onSelect(b.id)'>
           <q-icon :name='selectedFolderId === b.id ? "mdi-folder-outline": "mdi-folder"' />
           <span class='full-width text-caption' style='word-break: break-all'>{{ b.name }}</span>
           <q-menu
@@ -48,7 +48,8 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, inject, reactive } from 'vue'
+import { defineComponent, inject, reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import foldersDialog from 'components/Dialogs/Folders'
 import confirmDialog from 'components/Dialogs/Confirm'
 import editFolderDialog from 'components/Dialogs/EditFolder'
@@ -59,27 +60,22 @@ import { $db } from 'boot/dexie'
 export default defineComponent({
   setup() {
     const drawerLeft = inject('drawerLeft')
-    const selectedFolderId = inject('selectedFolderId')
-
+    const $store = useStore()
     const allFolder = {
       id: 'All',
       name: 'All chats'
     }
-    const customFolders = reactive([])
 
-    $db.folders.toArray(arr => {
-      customFolders.push(...arr)
-    })
+    const selectedFolderId = computed(() => $store.getters['app/selectedFolderId'])
+    const customFolders = computed(() => $store.getters['app/folders'])
 
-    const select = id => {
-      selectedFolderId.value = id
-    }
+    const onSelect = id => $store.commit('app/SetSelectedFolderId', id)
 
     const onEditFolders = () => {
       Dialog.create({
         component: foldersDialog,
         componentProps: {
-          folders: customFolders
+          folders: customFolders.value
         }
       }).onOk(async({ folders, deletes }) => {
         $db.transaction('rw', $db.folders, async() => {
@@ -127,8 +123,7 @@ export default defineComponent({
       drawerLeft,
       selectedFolderId,
       allFolder,
-      // list,
-      select,
+      onSelect,
       customFolders,
       onEditFolders,
       boxStyle: {
