@@ -15,26 +15,28 @@
         </q-item>
       </q-card-section>
       <q-separator />
-      <q-card-section style='max-height: 80vh' class='scroll no-padding'>
+      <q-card-section class='no-padding'>
         <q-list>
           <q-item-label header>My Folders</q-item-label>
-          <q-item v-for='(f, i) in editFolders' :key='i' clickable @click='editFolder(f)'>
-            <q-item-section avatar>
-              <q-icon :name='f.icon || "mdi-folder-outline"' />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label lines='1'>{{ f.name }}</q-item-label>
-              <q-item-label caption lines='1'>{{ f.items.length }} items</q-item-label>
-            </q-item-section>
-            <q-item-section side @click.stop='toggleDelete(f.id)'>
-              <div>
-                <q-btn flat round>
-                  <q-icon v-if='!deletes.has(f.id)' name='mdi-delete-outline' />
-                  <span v-else> Undo </span>
-                </q-btn>
-              </div>
-            </q-item-section>
-          </q-item>
+          <q-scroll-area :style='{ height: scrollFullHeight + "px" }' style='max-height: 40vh'>
+            <q-item v-for='(f, i) in editFolders' :key='i' :ref='el => { if (el) divs[i] = el }' clickable @click='editFolder(f)'>
+              <q-item-section avatar>
+                <q-icon :name='f.icon || "mdi-folder-outline"' />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label lines='1'>{{ f.name }}</q-item-label>
+                <q-item-label caption lines='1'>{{ f.items.length }} items</q-item-label>
+              </q-item-section>
+              <q-item-section side @click.stop='toggleDelete(f.id)'>
+                <div>
+                  <q-btn flat round>
+                    <q-icon v-if='!deletes.has(f.id)' name='mdi-delete-outline' />
+                    <span v-else> Undo </span>
+                  </q-btn>
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-scroll-area>
           <q-item clickable @click='createFolder()'>
             <q-item-section>
               CREATE NEW FOLDER
@@ -52,8 +54,8 @@
 </template>
 
 <script>
-import { useDialogPluginComponent, Dialog } from 'quasar'
-import { reactive } from 'vue'
+import { useDialogPluginComponent, Dialog, dom } from 'quasar'
+import { reactive, ref, watchEffect, onBeforeUpdate, computed } from 'vue'
 import newFolderDialog from './NewFolder'
 import editFolderDialog from './EditFolder'
 import { cloneDeep } from 'lodash'
@@ -71,6 +73,16 @@ export default {
 
     const editFolders = reactive(cloneDeep(props.folders))
     const deletes = reactive(new Set())
+
+    const divs = ref([])
+    onBeforeUpdate(() => {
+      divs.value = []
+    })
+    const scrollFullHeight = computed(() => {
+      return divs.value.map(e => dom.style(e.$el, 'height').replace('px', '')).reduce((pre, cur) => {
+        return pre += Number(cur)
+      }, 0)
+    })
 
     const createFolder = () => {
       Dialog.create({
@@ -93,7 +105,9 @@ export default {
     }
 
     return {
+      divs,
       dialogRef,
+      scrollFullHeight,
       ok() {
         onDialogOK({
           folders: cloneDeep(editFolders),
