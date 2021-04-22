@@ -1,8 +1,6 @@
 <template>
   <div>
-    <q-item>
-      <q-item-section>123</q-item-section>
-    </q-item>
+    123
   </div>
 </template>
 <script>

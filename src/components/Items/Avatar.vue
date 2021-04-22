@@ -15,6 +15,7 @@
         <span>{{ item.unarchivedNumber }}</span>
       </div>
     </q-item-section>
+    <slot name='menu' />
   </q-item>
 </template>
 <script>

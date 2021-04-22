@@ -1,5 +1,5 @@
 <template>
-  <q-item v-ripple dense tag='label'>
+  <q-item v-ripple tag='label'>
     <q-item-section thumbnail>
       <q-icon name='aspect_ratio' />
     </q-item-section>
@@ -7,7 +7,7 @@
       Default interface scale
     </q-item-section>
   </q-item>
-  <q-item dense>
+  <q-item>
     <q-item-section thumbnail>
       <q-icon />
     </q-item-section>

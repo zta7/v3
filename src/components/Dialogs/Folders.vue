@@ -55,7 +55,7 @@
 
 <script>
 import { useDialogPluginComponent, Dialog, dom } from 'quasar'
-import { reactive, ref, watchEffect, onBeforeUpdate, computed } from 'vue'
+import { reactive, ref, onBeforeUpdate, computed } from 'vue'
 import newFolderDialog from './NewFolder'
 import editFolderDialog from './EditFolder'
 import { cloneDeep } from 'lodash'

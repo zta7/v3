@@ -67,10 +67,10 @@ export default {
       Dialog.create({
         component: addItemsDialog,
         componentProps: {
-          folder: editFolder
+          items: editFolder.items
         }
-      }).onOk(d => {
-        console.log(d)
+      }).onOk(items => {
+        editFolder.items = items
       })
     }
     return {

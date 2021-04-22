@@ -1,31 +1,33 @@
 <template>
-  <q-list class='column no-wrap list bg-blue-grey-14 text-grey'>
-    <q-btn icon='menu' :style='boxStyle' flat @click='drawerLeft = true' />
-    <q-btn
+  <q-list class='column no-wrap bg-blue-grey-14 text-grey cursor-pointer' style='width: 75px'>
+    <div class='column no-wrap items-center justify-center q-pa-xs' style='min-height: 60px' @click='drawerLeft = true'>
+      <q-icon name='menu' flat size='24px' />
+    </div>
+    <div class='column no-wrap items-center justify-center q-pa-xs' :class='{"bg-primary text-white": selectedFolderId === allFolder.id}' style='min-height: 60px' @click='onSelect(allFolder.id)'>
+      <q-icon :name='selectedFolderId === allFolder.id ? "mdi-forum-outline" : "mdi-forum"' size='24px' />
+      <span class='text-caption'>{{ allFolder.name }}</span>
+    </div>
+    <!-- <q-btn
       class='no-border-radius'
-      :style='boxStyle'
       flat
       no-caps
       :class='{"bg-primary text-white" : selectedFolderId === allFolder.id}'
       @click='onSelect(allFolder.id)'>
       <q-icon :name='selectedFolderId === allFolder.id ? "mdi-forum-outline" : "mdi-forum"' />
       <span class='full-width text-caption'>{{ allFolder.name }}</span>
-    </q-btn>
+    </q-btn> -->
     <q-scroll-area
       class='column no-wrap scroll col-grow no-scroll'>
       <div v-sortable='sortableOptions'>
-        <q-btn
-          v-for='(b,i) in customFolders'
-          :key='i'
-          :style='boxStyle'
-          class='no-border-radius drag'
+        <div
+          v-for='b in customFolders'
+          :key='b.id'
+          style='min-height: 60px'
+          class='drag column no-wrap items-center justify-center q-pa-xs'
           :class='{"bg-primary text-white" : selectedFolderId === b.id, }'
-          stack
-          no-caps
-          flat
           @click='onSelect(b.id)'>
-          <q-icon :name='selectedFolderId === b.id ? "mdi-folder-outline": "mdi-folder"' />
-          <span class='full-width text-caption' style='word-break: break-all'>{{ b.name }}</span>
+          <q-icon :name='selectedFolderId === b.id ? "mdi-folder-outline": "mdi-folder"' size='24px' />
+          <span class='text-caption text-center' style='word-break: break-all'>{{ b.name }}</span>
           <q-menu
             touch-position
             context-menu>
@@ -38,9 +40,9 @@
               </q-item>
             </q-list>
           </q-menu>
-        </q-btn>
+        </div>
       </div>
-      <q-btn :style='boxStyle' flat no-caps @click='onEditFolders'>
+      <q-btn flat no-caps @click='onEditFolders'>
         <q-icon name='checklist' />
         <span class='full-width text-caption'>Edit</span>
       </q-btn>
@@ -48,7 +50,7 @@
   </q-list>
 </template>
 <script>
-import { defineComponent, inject, reactive, computed } from 'vue'
+import { defineComponent, inject, computed } from 'vue'
 import { useStore } from 'vuex'
 import foldersDialog from 'components/Dialogs/Folders'
 import confirmDialog from 'components/Dialogs/Confirm'
@@ -126,17 +128,8 @@ export default defineComponent({
       onSelect,
       customFolders,
       onEditFolders,
-      boxStyle: {
-        ...inject('boxStyle'),
-        padding: 0
-      },
       sortableOptions
     }
   }
 })
 </script>
-<style scoped>
-  .list {
-    width: 75px
-  }
-</style>

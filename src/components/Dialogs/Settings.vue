@@ -15,6 +15,17 @@
         </q-item>
       </q-card-section>
       <q-separator />
+      <q-card-section>
+        <!-- <q-list>
+          <q-item clickable @click='onFoldersClick()'>
+            <q-item-section thumbnail>
+              <q-icon name='mdi-folder-outline' />
+            </q-item-section>
+            <q-item-section>Folders</q-item-section>
+          </q-item>
+        </q-list> -->
+      </q-card-section>
+
       <q-card-section style='max-height: 80vh' class='scroll'>
         <scale-item />
       </q-card-section>
@@ -25,7 +36,9 @@
 
 <script>
 import scaleItem from 'components/Items/Scale'
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, Dialog } from 'quasar'
+import foldersDialog from 'components/Dialogs/Folders'
+
 export default {
   components: {
     scaleItem

@@ -12,6 +12,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@shopify/draggable": "^1.0.0-beta.8",
+    "@svgdotjs/svg.js": "^3.0.16",
     "axios": "^0.21.1",
     "bluebird": "^3.7.2",
     "core-js": "^3.6.5",
@@ -28,6 +29,7 @@
     "nedb": "^1.8.0",
     "npm": "^7.7.5",
     "quasar": "^2.0.0-beta.1",
+    "snapsvg": "^0.5.1",
     "vee-validate": "^4.2.3",
     "velocity-animate": "^2.0.6",
     "vue-i18n": "^9.0.0-beta.0"

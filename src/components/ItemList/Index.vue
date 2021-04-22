@@ -7,48 +7,38 @@
       display='lmr'
       :item='item'
       clickable
-      :active='item.id === selectedItemId'
+      :to="{ name: 'ItemContent', params: { id: item.id } }"
       active-class='bg-light-blue-5 text-white'
-      :style='{ ...boxStyle, width: itemWidth + "px" }'
-      @click='onSelectItem(item.id)' />
-
-    <!-- <q-item
-      v-for='item in items'
-      :key='item.id'
-      clickable
-      :active='item.id === selectedItemId'
-      active-class='bg-blue text-white'
-      :style='{ ...boxStyle, width: itemWidth + "px" }'
+      :style='{ width: itemWidth + "px" }'
+      style='height: 60px'
       @click='onSelectItem(item.id)'>
-      <q-item-section avatar>
-        <q-avatar color='teal' text-color='white'>
-          <img v-if='item.avatar' :src='item.avatar'>
-          <span v-else>{{ item.name[0] }}</span>
-          <q-badge v-show='isLeftEdge' color='info' class='absolute' style='bottom: -4px;right: -3px'>
-            <span class='ellipsis' style='max-width: 24px'>1324</span>
-          </q-badge>
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label lines='1' class='text-subtitle2'>{{ item.label }}</q-item-label>
-        <q-item-label lines='1'>
-          <span class='text-weight-medium '>{{ item.perCaption }}</span>
-          <span class='text-body2 text-weight-light'>{{ item.caption }}</span>
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <div class='column no-wrap items-end justify-between'>
-          <span>{{ item.lastUpdateTime }}</span>
-          <span>{{ item.unarchivedNumber }}</span>
-        </div>
-      </q-item-section>
-    </q-item> -->
+      <template #menu>
+        <q-menu
+          touch-position
+          context-menu>
+          <q-list dense style='min-width: 100px'>
+            <q-item v-close-popup clickable>
+              <q-item-section>Pin to top</q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable>
+              <q-item-section>View Profile</q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable @click='onDeleteItem(item)'>
+              <q-item-section>Delete Item</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </template>
+    </avatar-item>
   </q-list>
 </template>
 <script>
 import { defineComponent, inject, computed } from 'vue'
 import avatarItem from 'components/Items/Avatar'
 import { useStore } from 'vuex'
+import confirmDialog from 'components/Dialogs/Confirm'
+import { Dialog } from 'quasar'
+import { $db } from 'boot/dexie'
 export default defineComponent({
   components: {
     avatarItem
@@ -64,14 +54,25 @@ export default defineComponent({
     const isLeftEdge = inject('isLeftEdge')
     const items = computed(() => $store.getters['app/folderItems'])
     const selectedItemId = computed(() => $store.getters['app/selectedItemId'])
+    console.log(selectedItemId)
     const onSelectItem = id => $store.commit('app/SetSelectedItemId', id)
-
+    const onDeleteItem = item => {
+      Dialog.create({
+        component: confirmDialog,
+        componentProps: {
+          content: 'Are you sure you want to delete item ?',
+          confirmBtnLabel: 'Delete'
+        }
+      }).onOk(() => {
+        $db.items.delete(item.id)
+      })
+    }
     return {
       items,
       onSelectItem,
+      onDeleteItem,
       selectedItemId,
-      isLeftEdge,
-      boxStyle: inject('boxStyle')
+      isLeftEdge
     }
   }
 })

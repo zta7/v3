@@ -10,7 +10,7 @@
           :limits='splitterLimits'>
           <template #before>
             <div class='column no-wrap full-height no-scroll'>
-              <div class='row items-center justify-center cursor-pointer' :style='boxStyle'>
+              <div class='row items-center justify-center cursor-pointer' :style='box.style'>
                 <q-input v-if='!isLeftEdge' class='full-width q-px-md' filled dense label='Search' autofocus />
                 <q-icon v-else name='search' size='24px' @click='onSearchIconClick' />
               </div>
@@ -63,12 +63,14 @@ export default defineComponent({
     const isLeftEdge = computed(() => splitterItemsContent.value === splitterLimits[0])
     provide('isLeftEdge', isLeftEdge)
 
-    const boxStyle = {
-      minWidth: '75px',
-      minHeight: '60px'
+    const box = {
+      style: {
+        minWidth: '75px',
+        minHeight: '60px'
+      }
     }
 
-    provide('boxStyle', boxStyle)
+    provide('box', box)
 
     const styleFn = (offset, height) => {
       return {
@@ -94,7 +96,7 @@ export default defineComponent({
       splitterLimits,
       isLeftEdge,
       onSearchIconClick,
-      boxStyle,
+      box,
       styleFn
     }
   }

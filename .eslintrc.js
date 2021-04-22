@@ -22,7 +22,8 @@ module.exports = {
     path: true,
     $: true,
     go: true,
-    RegExp: true
+    RegExp: true,
+    Snap: true
   },
   plugins: [
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-file
