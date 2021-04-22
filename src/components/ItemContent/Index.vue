@@ -23,8 +23,8 @@
           </q-item-section>
         </q-item>
         <q-separator />
-        <q-scroll-area class='col-grow q-px-md'>
-          <svg id='svg' style='height: 1000px' />
+        <q-scroll-area class='col-grow'>
+          <div id='svg' />
         </q-scroll-area>
       </div>
     </template>
@@ -47,7 +47,7 @@
   </q-splitter>
 </template>
 <script>
-import { defineComponent, inject, computed, reactive, onMounted } from 'vue'
+import { defineComponent, inject, computed, reactive, onMounted, ref } from 'vue'
 import LocalStorageUtil from 'utils/LocalStorage'
 import itemContentInfo from './ItemContentInfo/'
 export default defineComponent({
@@ -107,7 +107,9 @@ export default defineComponent({
     ]
 
     onMounted(() => {
-      const s = Snap('#svg')
+      const v = ref('1')
+
+      const s = Snap(200, 80)
       const lineStyle = {
         stroke: '#000',
         strokeWidth: 2
@@ -122,10 +124,12 @@ export default defineComponent({
         strokeWidth: 2,
         fill: 'transparent'
       }
+      s.line(1, 0, 1, 80).attr({ ...lineStyle })
+      const text = s.text(20, 15, '3D打印机')
 
-      s.line(10, 0, 10, 80).attr({ ...lineStyle })
-      s.text(20, 15, '3D打印机')
-      s.line(10, 40, 180, 40).attr({ ...lineStyle })
+      setTimeout(() => { text.attr({ text: 'my new text' }) }, 2000)
+
+      s.line(1, 40, 180, 40).attr({ ...lineStyle })
 
       s.rect(60, 33, 34, 14)
 
@@ -157,7 +161,9 @@ export default defineComponent({
       ballFn(150, 40)
       ballFn(150, 61)
 
-      s.path('M200 40, L180 30, L180 50Z').attr({ ...arrowStyle })
+      s.path('M197 40, L180 30, L180 50Z').attr({ ...arrowStyle })
+
+      document.getElementById('svg').append(s.node)
     })
     return {
       box: inject('box'),
