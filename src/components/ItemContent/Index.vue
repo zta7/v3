@@ -107,63 +107,133 @@ export default defineComponent({
     ]
 
     onMounted(() => {
-      const v = ref('1')
-
-      const s = Snap(200, 80)
+      const strokeWidth = 2
       const lineStyle = {
-        stroke: '#000',
-        strokeWidth: 2
+        stroke: 'red',
+        strokeWidth
       }
       const arrowStyle = {
-        stroke: '#000',
-        strokeWidth: 2,
-        fill: 'transparent'
+        fill: 'red'
       }
       const circleStyle = {
-        stroke: '#000',
-        strokeWidth: 2,
+        stroke: 'red',
+        strokeWidth,
         fill: 'transparent'
       }
-      s.line(1, 0, 1, 80).attr({ ...lineStyle })
-      const text = s.text(20, 15, '3D打印机')
+      const rectStyle = {
+        stroke: 'red',
+        strokeWidth
+      }
+      const rectOff = {
+        fill: 'transparent'
+      }
+      const rectOn = {
+        fill: 'red'
+      }
+      const area = (title, state, A = '---', B = '---', C = '---') => {
+        const s = Snap()
 
-      setTimeout(() => { text.attr({ text: 'my new text' }) }, 2000)
+        s.line(strokeWidth / 2, 0, strokeWidth / 2, 80).attr({ ...lineStyle })
+        s.text(strokeWidth + 10, 15, title)
 
-      s.line(1, 40, 180, 40).attr({ ...lineStyle })
+        s.line(strokeWidth / 2, 80 / 2, 40, 80 / 2).attr({ ...lineStyle })
 
-      s.rect(60, 33, 34, 14)
+        const g = s.g(
+          s.line(45, 40, 60, 40).attr({ ...lineStyle }),
+          s.line(60, 40, 64, 40).attr({ ...lineStyle }),
+          s.line(94, 40, 110, 40).attr({ ...lineStyle }),
+          s.path(`M45 45,L40 40,L45 35,L50 35,L45 40,L50 45Z`).attr({
+            ...arrowStyle
+          }),
+          s.path('M110 45,L115 40,L110 35,L105 35,L110 40,L105 45Z').attr({
+            ...arrowStyle
+          })
+        )
 
-      s.path('M45 45,L40 40,L45 35').attr({
-        ...arrowStyle
-      })
-      s.path('M50 45,L45 40,L50 35').attr({
-        ...arrowStyle
-      })
-      s.path('M105 45,L110 40,L105 35').attr({
-        ...arrowStyle
-      })
-      s.path('M110 45,L115 40,L110 35').attr({
-        ...arrowStyle
-      })
+        const rect = s.rect(63, 33, 30, 15).attr({ ...rectStyle })
+        state ? rect.attr({ ...rectOn }) : rect.attr({ ...rectOff })
 
-      const ballFn = (x, y) => {
-        const r = 5
-        const lineHeight = 8
-        const XOffset = 5
-        s.circle(x, y, r).attr({ ...circleStyle })
-        s.line(x - r - XOffset, y, x + r + XOffset, y).attr({ ...lineStyle })
-        s.line(x, y - r, x, y - r - lineHeight).attr({ ...lineStyle })
-        s.line(x - XOffset, y - r - 6, x + XOffset, y - r - 2).attr({ ...lineStyle })
-        s.line(x - XOffset, y - r - 10, x + XOffset, y - r - 6).attr({ ...lineStyle })
+        s.line(115, 80 / 2, 140, 80 / 2).attr({ ...lineStyle })
+        s.line(160, 80 / 2, 180, 80 / 2).attr({ ...lineStyle })
+
+        const ballFn = (x, y) => {
+          const r = 5
+          const lineHeight = 8
+          const XOffset = 5
+          s.circle(x, y, r).attr({ ...circleStyle })
+          s.line(x - r - XOffset, y, x + r + XOffset, y).attr({ ...lineStyle })
+          s.line(x, y - r, x, y - r - lineHeight).attr({ ...lineStyle })
+          s.line(x - XOffset, y - r - 6, x + XOffset, y - r - 2).attr({ ...lineStyle })
+          s.line(x - XOffset, y - r - 10, x + XOffset, y - r - 6).attr({ ...lineStyle })
+        }
+
+        ballFn(150, 19)
+        ballFn(150, 40)
+        ballFn(150, 61)
+
+        s.path('M197 40, L180 30, L180 50Z').attr({ ...arrowStyle })
+
+        s.text(220, 19, A).attr({ fill: 'yellow' })
+        s.text(220, 40, B).attr({ fill: 'green' })
+        s.text(220, 61, C).attr({ fill: 'red' })
+
+        s.text(280, 19, 'A').addClass('fill-yellow-13')
+        s.text(280, 40, 'A').addClass('fill-green-10')
+        s.text(280, 61, 'A').addClass('fill-red-10')
+
+        return s
+      }
+      const col = areas => {
+        const b = Snap()
+        let width = 0
+        const textY = 15
+        let preY = 25
+
+        b.text(5, textY, '3D打印区域')
+
+        areas.forEach((e, i, arr) => {
+          const box = e.getBBox()
+          if (box.w > width) width = box.w
+          e.attr({
+            y: preY
+          })
+          preY += box.h
+          b.append(e.node)
+        })
+
+        b.line(0, 25, width + 20, 25).attr({ ...lineStyle })
+
+        b.attr({
+          width: width + 20,
+          height: textY + preY
+        })
+        return b
       }
 
-      ballFn(150, 19)
-      ballFn(150, 40)
-      ballFn(150, 61)
+      const row = blocks => {
+        const r = Snap()
+        let preX = 0
+        let height = 0
+        let width = 0
+        blocks.forEach((e, i, arr) => {
+          const box = e.getBBox()
+          if (box.h > height) height = box.h
+          width += box.w
+          e.attr({
+            x: preX
+          })
+          preX += box.w
+          r.add(e)
+        })
+        r.attr({
+          width,
+          height
+        })
+        return r
+      }
+      // const b = block([area(), area()])
 
-      s.path('M197 40, L180 30, L180 50Z').attr({ ...arrowStyle })
-
-      document.getElementById('svg').append(s.node)
+      document.getElementById('svg').append(row([col([area(), area()]), col([area(), area(), area()])]).node)
     })
     return {
       box: inject('box'),
@@ -175,3 +245,14 @@ export default defineComponent({
   }
 })
 </script>
+<style>
+  .fill-red-10 {
+    fill: #b71c1c
+  }
+  .fill-yellow-13{
+    fill: #ffea00
+  }
+  .fill-green-10 {
+    fill: #1b5E20
+  }
+</style>
